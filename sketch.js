@@ -31,7 +31,9 @@ function setup() {
   restartButton = select("#restart");
   newGameButton = select("#new_game");
 
-  restart();
+  restartButton.mouseClicked(restart);
+  newGameButton.mouseClicked(newGame);
+  newGame();
 }
 
 function draw() {
@@ -151,6 +153,9 @@ function getColorOfCell(x, y, l){
   }
 }
 
+function newGame(difficulty){
+  
+}
 function restart(){
   setBoard(currentBoard.difficulty, currentBoard.index);
 }
