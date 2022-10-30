@@ -20,7 +20,7 @@ let timeSinceLastMove = 0; // in milliseconds
 let difficultySelector, restartButton, newGameButton;
 
 function preload(){
-  BOARDS = loadJSON('./levels.json');
+  BOARDS = loadJSON('./assets/levels.json');
 }
 
 function setup() {
