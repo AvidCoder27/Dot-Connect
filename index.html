@@ -13,19 +13,19 @@
   </head>
 
   <body>
-    <script src="sketch.js"></script>
-    <script src="hamiltonian.js"></script>
-
     <button id="restart" name="restart">Restart</button>
-    <button id="new_game" name="new_game">New Game</button>
-
-    <label for="choose_level">Choose Level: </label>
-    <select id="choose_level">
+    <label for="difficulty">Choose Level: </label>
+    <select id="difficulty">
       <option value="beginner">Beginner</option>
       <option value="easy">Easy</option>
       <option value="normal">Normal</option>
       <option value="hard">Hard</option>
       <option value="expert">Expert</option>
     </select>
+    <button id="new_game" name="new_game">New Game</button>
+
+    <script src="sketch.js"></script>
+    <script src="utils.js"></script>
+    <script src="hamiltonian.js"></script>
   </body>
 </html>

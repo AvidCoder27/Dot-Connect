@@ -17,7 +17,7 @@ let start, end;
 let currentPosition;
 let timeSinceLastMove = 0; // in milliseconds
 
-let boardSelector, restartButton, newGameButton;
+let difficultySelector, restartButton, newGameButton;
 
 function preload(){
   BOARDS = loadJSON('./levels.json');
@@ -27,7 +27,7 @@ function setup() {
 	createCanvas(100,100);
 	background(255);
 
-  boardSelector = select("#choose_level");
+  difficultySelector = select("#difficulty");
   restartButton = select("#restart");
   newGameButton = select("#new_game");
 
@@ -107,11 +107,6 @@ function undoMove(){
   }
 }
 
-function checkForFullBoard(){
-  for (let y = 0; y < boardHeight; y++) for (let x = 0; x < boardWidth; x++) if (!board[y][x]) return false;
-  return true;
-}
-
 function keyPressed(){
   switch(keyCode) {
     case LEFT_ARROW:
@@ -136,31 +131,21 @@ function keyPressed(){
   }
 }
 
-function getColorOfCell(x, y, l){
-  switch (l[y][x]) {
-    case 0:
-      return EMPTY_COLOR;
-    case 1:
-      return WALL_COLOR;
-    case 2:
-      return PLAYER_COLOR;
-    case 3:
-      return BAD_COLOR;
-    case 8:
-      return START_COLOR;
-    case 9:
-      return END_COLOR;
-  }
-}
+function newGame(){
+  const difficulty = difficultySelector.value();
+  let boardsOfDifficulty = Object.keys(BOARDS[difficulty]);
 
-function newGame(difficulty){
-  
+  if (boardsOfDifficulty.length > 1) {
+    boardsOfDifficulty.splice(currentBoard.index.toString(), 1);
+  }
+  setBoard(difficulty, random(boardsOfDifficulty));
 }
 function restart(){
   setBoard(currentBoard.difficulty, currentBoard.index);
 }
 
 function setBoard(difficulty, index){
+  currentBoard = {difficulty: difficulty, index: index};
   p = BOARDS[difficulty][index];
   originalBoard = p.board;
 
@@ -183,21 +168,4 @@ function setBoard(difficulty, index){
   setCellValue(start, "ST");
 
   resizeCanvas(boardWidth*CELL_SIZE, boardHeight*CELL_SIZE);
-}
-
-setCellValue = (xyPair, value) => board[xyPair.y][xyPair.x] = value;
-getCellValue = (xyPair) => board[xyPair.y][xyPair.x];
-
-function addVector(xy1, xy2) {
-  return {x: xy1.x + xy2.x, y: xy1.y + xy2.y};
-}
-function subtractVector(xy1, xy2) {
-  return {x: xy1.x - xy2.x, y: xy1.y - xy2.y};
-}
-function areVectorsEqual(xy1, xy2) {
-  return xy1.x === xy2.x && xy1.y === xy2.y;
-}
-
-function screenSpace(n){
-    return  (n+0.5) * CELL_SIZE;
 }
