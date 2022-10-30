@@ -8,104 +8,28 @@ const PLAYER_COLOR = "#0384fc";
 const BAD_COLOR = "#ff0000";
 const EMPTY_COLOR = "#c8c8c8";
 
-
-const BOARD_1 = {
-  board: [
-    [0,0,0,1,1],
-    [0,1,0,0,0],
-    [0,0,0,0,0],
-    [0,0,1,0,8],
-    [0,0,1,9,1]
-  ], start: {x:4, y:3}, end: {x:3, y:4},
-  width: 5, height: 5
-}
-
-const BOARD_2 = {
-  board: [
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,8,1,0],
-    [0,0,0,0,0,1,1,9],
-    [0,0,1,0,0,1,1,1],
-    [0,0,1,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0]
-  ], start: {x:5, y:1}, end: {x:7, y:2},
-  width: 8, height: 6
-}
-
-const BOARD_3 = {
-  board: [
-    [0,0,0,0,1,1,9,0,0,1],
-    [0,0,0,0,0,0,1,1,0,0],
-    [0,1,0,0,0,0,8,1,1,0],
-    [0,0,0,0,0,1,1,0,0,0],
-    [0,0,1,0,0,1,1,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0]
-  ], start: {x:6, y:2}, end: {x:6, y:0},
-  width: 10, height: 6
-}
-
-const BOARD_4 = {
-  board: [
-    [0,0,1,9,0,0,0,0,0,0,0,0],
-    [0,0,1,1,0,0,0,1,0,0,1,0],
-    [0,0,0,0,0,0,0,1,0,0,0,0],
-    [0,0,0,0,0,0,0,1,0,0,0,0],
-    [0,0,0,0,0,0,0,1,0,0,1,0],
-    [1,0,0,0,0,1,1,8,0,0,1,0],
-    [1,0,0,1,0,0,0,0,1,0,0,0],
-    [1,1,0,0,0,0,0,0,0,0,0,0]
-  ], start: {x:7, y:5}, end: {x:3, y:0},
-  width: 12, height: 8
-}
-
-const BOARD_5 = {
-  board: [
-    [9,0,0,0,1,1,0,0,0,0,0,0],
-    [1,0,0,0,1,0,0,0,0,0,0,0],
-    [0,0,1,1,0,0,1,1,1,1,1,0],
-    [0,0,0,0,0,0,0,0,0,1,0,0],
-    [0,0,0,0,0,0,0,0,0,1,0,1],
-    [0,0,0,1,0,0,0,0,0,1,0,1],
-    [0,1,0,0,0,0,0,0,0,1,0,0],
-    [0,1,0,0,0,1,1,0,0,0,0,0],
-    [0,1,0,0,0,1,0,0,1,0,0,0],
-    [0,0,0,0,0,1,0,0,8,0,0,0]
-  ], start: {x:8, y:9}, end: {x:0, y:0},
-  width: 12, height: 10
-}
-
-const BOARD_6 = {
-  board: [
-    [1,9,1,0,0,0,0,0,1,0,0,0],
-    [1,0,1,0,0,1,1,0,0,0,0,0],
-    [0,0,0,0,0,0,1,0,0,0,0,0],
-    [0,1,0,0,0,0,0,0,0,0,1,0],
-    [0,0,0,0,0,1,8,0,0,0,0,0],
-    [1,0,0,0,0,0,1,0,1,0,0,0],
-    [0,0,0,0,0,0,0,0,1,1,0,0],
-    [0,1,1,1,0,1,0,0,1,0,0,1],
-    [0,0,0,0,0,0,1,0,0,0,0,0],
-    [0,0,1,0,0,0,1,1,0,0,0,0]
-  ], start: {x:6, y:4}, end: {x:1, y:0},
-  width: 12, height: 10
-};
-
+let BOARDS;
+let currentBoard = {difficulty: "beginner", index: 0};
 let originalBoard;
 let board;
 let boardWidth, boardHeight;
 let start, end;
 let currentPosition;
-let boardSelector;
 let timeSinceLastMove = 0; // in milliseconds
 
-let aStar;
+let boardSelector, restartButton, newGameButton;
+
+function preload(){
+  BOARDS = loadJSON('./levels.json');
+}
 
 function setup() {
 	createCanvas(100,100);
 	background(255);
 
-  boardSelector = createSelect(select("#choose_level"));
-  boardSelector.changed(restart);
+  boardSelector = select("#choose_level");
+  restartButton = select("#restart");
+  newGameButton = select("#new_game");
 
   restart();
 }
@@ -181,13 +105,6 @@ function undoMove(){
   }
 }
 
-function restart(){
-  board = [];
-  chooseBoard(boardSelector.value());
-  currentPosition = {...start};
-  resizeCanvas(boardWidth*CELL_SIZE, boardHeight*CELL_SIZE);
-}
-
 function checkForFullBoard(){
   for (let y = 0; y < boardHeight; y++) for (let x = 0; x < boardWidth; x++) if (!board[y][x]) return false;
   return true;
@@ -234,39 +151,23 @@ function getColorOfCell(x, y, l){
   }
 }
 
-function chooseBoard(arg){
-  let p;
-  switch (arg){
-    case "1":
-      p = {...BOARD_1};
-      break;
-    case "2":
-      p = {...BOARD_2};
-      break;
-    case "3":
-      p = {...BOARD_3};
-      break;
-    case "4":
-      p = {...BOARD_4};
-      break;
-    case "5":
-      p = {...BOARD_5};
-      break;
-    case "6":
-      p = {...BOARD_6};
-      break;
-    default:
-      p = arg;
-      break;
-  }
+function restart(){
+  setBoard(currentBoard.difficulty, currentBoard.index);
+}
 
+function setBoard(difficulty, index){
+  p = BOARDS[difficulty][index];
   originalBoard = p.board;
+
   boardWidth = p.width;
   boardHeight = p.height;
+
   start = p.start;
   end = p.end;
+  currentPosition = {...start};
 
   // create an empty board, except for a player spot at the start position
+  board = [];
   for (let y = 0; y < boardHeight; y++) {
     board[y] = []
     for (let x = 0; x < boardWidth; x++) {
@@ -275,6 +176,8 @@ function chooseBoard(arg){
     }
   }
   setCellValue(start, "ST");
+
+  resizeCanvas(boardWidth*CELL_SIZE, boardHeight*CELL_SIZE);
 }
 
 setCellValue = (xyPair, value) => board[xyPair.y][xyPair.x] = value;
