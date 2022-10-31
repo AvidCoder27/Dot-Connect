@@ -44,7 +44,7 @@ function draw() {
   if (timeSinceLastMove > MOVE_TIME && MOVE_TIME > 0){
     timeSinceLastMove = 0;
     console.log("moving");
-    move({x: 0 , y: 0});
+    movePlayer({x: 0 , y: 0});
   }
 
 	for (let x = 0; x < boardWidth; x++){
@@ -79,7 +79,7 @@ function draw() {
   text("END", screenSpace(end.x), screenSpace(end.y));
 }
 
-function move(direction){ // {x: horizontal, y: vertical}
+function movePlayer(direction){ // {x: horizontal, y: vertical}
   const proposedPosition = addVector(currentPosition, direction);
 
   if(areVectorsEqual(proposedPosition, subtractVector(currentPosition, getCellValue(currentPosition)))) undoMove();
@@ -111,16 +111,16 @@ function undoMove(){
 function keyPressed(){
   switch(keyCode) {
     case LEFT_ARROW:
-      move({x: -1, y: 0});
+      movePlayer({x: -1, y: 0});
       break;
     case RIGHT_ARROW:
-      move({x: 1, y: 0});
+      movePlayer({x: 1, y: 0});
       break;
     case UP_ARROW:
-      move({x: 0, y: -1});
+      movePlayer({x: 0, y: -1});
       break;
     case DOWN_ARROW:
-      move({x: 0, y: 1});
+      movePlayer({x: 0, y: 1});
       break;
     case 90: // Z key
       undoMove();
