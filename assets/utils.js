@@ -28,7 +28,8 @@ function getColorOfCell(x, y, l){
       case 8:
         return START_COLOR;
       case 9:
-        return END_COLOR;
+        if (showEnd) return END_COLOR;
+        return EMPTY_COLOR;
     }
 }
 

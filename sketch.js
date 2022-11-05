@@ -18,6 +18,7 @@ let currentPosition;
 let timeSinceLastMove = 0; // in milliseconds
 
 let difficultySelector, restartButton, newGameButton;
+let showEnd = false;
 
 function preload(){
   const jsonURL = "./assets/levels.json"
@@ -39,6 +40,7 @@ function setup() {
 
 function draw() {
   timeSinceLastMove += deltaTime;
+  showEnd = document.getElementById("show_end").checked;
   background(255);
 
   if (timeSinceLastMove > MOVE_TIME && MOVE_TIME > 0){
@@ -76,7 +78,7 @@ function draw() {
   fill(0);
   textAlign("center");
   text("START", screenSpace(start.x), screenSpace(start.y));
-  text("END", screenSpace(end.x), screenSpace(end.y));
+  if (showEnd) text("END", screenSpace(end.x), screenSpace(end.y));
 }
 
 function movePlayer(direction){ // {x: horizontal, y: vertical}
@@ -93,9 +95,9 @@ function movePlayer(direction){ // {x: horizontal, y: vertical}
     // puts the direction into the board to represent that the player moved into that cell
     setCellValue(currentPosition, direction);
     
-    if (areVectorsEqual(currentPosition, end)) {
+    // if (areVectorsEqual(currentPosition, end)) {
       checkForFullBoard() ? alert("You won!") : null;
-    }
+    // }
   }
 }
 
