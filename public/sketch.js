@@ -21,7 +21,7 @@ let difficultySelector, restartButton, newGameButton;
 let showEnd = false;
 
 function preload(){
-  const jsonURL = "./assets/levels.json"
+  const jsonURL = "./levels.json"
   BOARDS = loadJSON(jsonURL);
 }
 
