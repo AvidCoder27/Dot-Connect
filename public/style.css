@@ -1,0 +1,11 @@
+html, body {
+  font-size: large;
+}
+
+canvas {
+  display: block;
+}
+
+select, label, button {
+  margin: 10px;
+}

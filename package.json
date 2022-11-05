@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "express": "^4.18.2",
+    "http": "^0.0.1-security"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "dot_connect_solver",
+  "version": "1.0.0",
+  "description": "This server will find hamiltonian paths in the data sent to it and will return a hamiltonian path.",
+  "main": "server.js",
+  "keywords": [
+    "hamiltonian",
+    "path"
+  ],
+  "author": "Gili Reeves",
+  "license": "MIT"
+}
