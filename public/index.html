@@ -14,13 +14,8 @@
 
   <body>
     <div id="game">
-      <input type="checkbox" id="show_end" name="show_end">
-      <label for="show_end">Show End</label>
-  
-      <button id="restart" name="restart">Restart</button>
-  
-      <label for="difficulty">Choose Level: </label>
-      <select id="difficulty">
+      <label for="difficulty">Choose Difficulty: </label>
+      <select id="difficulty" class="right-margin">
         <option value="beginner">Beginner</option>
         <option value="easy">Easy</option>
         <option value="normal">Normal</option>
@@ -28,9 +23,15 @@
         <option value="expert">Expert</option>
       </select>
   
-      <button id="new_game" name="new_game">New Game</button>
-    </div>
+      <button id="new_game" name="new_game" class="right-margin">New Game</button>
+      
+      <button id="restart" name="restart" class="right-margin">Restart</button>
 
+      <input type="checkbox" id="show_end" name="show_end">
+      <label for="show_end">Show End</label>
+    </div>
+    <br>
+    <hr>
     <div id="server_interaction">
       <p>Wanna send some data to the server? Enter it below!</p>
       <input type="text" id="data" name="data">

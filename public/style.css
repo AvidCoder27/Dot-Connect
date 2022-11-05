@@ -6,6 +6,6 @@ canvas {
   display: block;
 }
 
-select, label, button {
-  margin: 10px;
+.right-margin {
+  margin: 5px 30px 5px 5px
 }
