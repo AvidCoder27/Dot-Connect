@@ -59,6 +59,7 @@ function draw() {
       circle(screenX, screenY, CELL_SIZE);
 		}
 	}
+
   for (let x = 0; x < boardWidth; x++){
 		for (let y = 0; y < boardHeight; y++){
       const screenX = screenSpace(x);
@@ -76,10 +77,24 @@ function draw() {
 		}
 	}
 
+  push();
   fill(0);
   textAlign("center");
-  text("START", screenSpace(start.x), screenSpace(start.y));
-  if (showEnd) text("END", screenSpace(end.x), screenSpace(end.y));
+  let cellIndex = 1;
+  for (let y = 0; y < boardHeight; y++){
+    for (let x = 0; x < boardWidth; x++){
+      if (originalBoard[y][x] !== 1) {
+        text(cellIndex, screenSpace(x), screenSpace(y));
+        cellIndex++;
+      }
+    }
+  }
+  pop();
+
+  // fill(0);
+  // textAlign("center");
+  // text("START", screenSpace(start.x), screenSpace(start.y));
+  // if (showEnd) text("END", screenSpace(end.x), screenSpace(end.y));
 }
 
 async function sendData() {
