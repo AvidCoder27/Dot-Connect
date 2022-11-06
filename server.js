@@ -8,32 +8,70 @@ app.use(express.json({ limit: '1mb' }));
 app.post("/api", (request, response) => {
     console.log("Request recieved: " + request.body.message);
     
-    const solution = solveBoard(request.body.board, request.body.width, request.body.height, request.body.start, request.body.end);
+    const graphAndSolution = solveBoard(request.body.board, request.body.width, request.body.height, request.body.start, request.body.end);
 
     response.json({
-        status: "success",
-        solution: solution,
+        status: graphAndSolution.status,
+        graph: graphAndSolution.graph,
+        solution: graphAndSolution.solution,
     });
 });
 
 function solveBoard(board, width, height, start, end) {
     console.log("Starting solver...");
+    const graphAndStartIndex = graphFromGrid(board, width, height);
+    const graph = graphAndStartIndex.nodes;
+    const startIndex = graphAndStartIndex.startIndex;
 
-    let graph = graphFromGrid(board, width, height);
+    const x = new Array(graph.length).fill(-1);
+    x[0] = startIndex;
+    let posX = 1;
+
+    while (posX < x.length) { // loop while the current position is in the X array; once it isn't, then it's found a solution
+        let k = x[posX] + 1;
+
+        while (true) {
+            // if the suggested value (k) is already in the X array, move on to the next k.
+            // OR if the suggested value (k) is not adjacent to the previous item in the X array, move on to the next k.
+            if (graph[ x[posX-1] ][k] === 0 || x.includes(k)) { 
+                k++;
+            } else {
+                break;
+            }
+        }
+        
+        if (k >= x.length) { // checks if it should backtrack
+            x[posX] = -1; //reset back to -1
+            posX--; //move back one space in the X array
+            // check for backtracking all the way to the beginning of the X array
+            if (posX < 1) {
+                console.log("No solution found");
+                return {status: 'fail', graph, solution: null};
+            }
+        } else {
+            x[posX] = k;
+            posX ++;
+            // if (posX > x.length) break;
+        }
+    }
 
     console.log("Solved!");
-    return graph;
+    return {status: 'success', graph, solution: x};
 }
 
 function graphFromGrid(g, width, height){
     let nodes = [];
+    let startIndex = undefined;
 
     let numberOfNodes = 0;
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++){
             if (g[y][x] === 1) { // if it's a wall
-                g[y][x] = "#"
+                g[y][x] = "#";
             } else {
+                if (g[y][x] === 8){ // if it's start, set the startIndex
+                    startIndex = numberOfNodes;
+                } 
                 g[y][x] = numberOfNodes;
                 nodes.push([]);
                 numberOfNodes ++;
@@ -44,7 +82,7 @@ function graphFromGrid(g, width, height){
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++){
             if (g[y][x] !== "#") { // if not wall
-                for (let i = 0; i < numberOfNodes; i++) { 
+                for (let i = 0; i < numberOfNodes; i++) {  // populate the node with 0s for every other node
                     nodes[g[y][x]].push(0)
                 }
 
@@ -71,8 +109,11 @@ function graphFromGrid(g, width, height){
             }
         }
     }
+    // const entryPoint = new Array(numberOfNodes + 1).fill(0);
+    // entryPoint[startIndex] = 1; // 1 to say it's adjacent to the starting node
+    // nodes.push(entryPoint);
 
-    return nodes;
+    return {nodes, startIndex};
 }
 
 function isNode(a, x, y){
