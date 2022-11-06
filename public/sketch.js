@@ -94,6 +94,7 @@ async function sendData() {
 
   const response = await fetch('/api', options);
   const responseData = await response.json();
+
   console.log(responseData);
 }
 
