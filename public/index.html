@@ -33,11 +33,11 @@
     <br>
     <hr>
     <div id="server_interaction">
-      <button id="send" name="send" onclick="sendData()">Send the level to the server to be solved</button>
+      <button id="send" name="send" onclick="sendData()" class="right-margin">Send the level to the server to be solved</button>
+      <button id="execute" name="execute" onclick="executeSolution()" disabled>Execute the solution on the board</button>
       <br>
-      <p>Below is the grid as an adjacency matrix:</p>
-      <textarea id="nodes_output" cols="40" rows="5"></textarea>
-      <p>An amazing <a href="https://graphonline.ru/en/create_graph_by_matrix" target="_blank">GraphOnline page</a> to find an adjacency matrix's hamiltonian path.</p>
+      <p id="text_output_p">Press the solve button above to get the solution.</p>
+      <textarea id="text_output" cols="70" rows="5" disabled></textarea>
     </div>
 
     <script src="sketch.js"></script>
