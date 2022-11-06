@@ -80,7 +80,7 @@ function draw() {
   push();
   fill(0);
   textAlign("center");
-  let cellIndex = 1;
+  let cellIndex = 0;
   for (let y = 0; y < boardHeight; y++){
     for (let x = 0; x < boardWidth; x++){
       if (originalBoard[y][x] !== 1) {
@@ -112,8 +112,8 @@ async function sendData() {
 
   console.log(responseData);
   let nodesOutput = "";
-  for (let i = 0; i < responseData.solution.length; i++) {
-    nodesOutput += responseData.solution[i];
+  for (let i = 0; i < responseData.graph.length; i++) {
+    nodesOutput += responseData.graph[i];
     nodesOutput += ";\n";
   }
   document.getElementById("nodes_output").innerHTML = nodesOutput;
