@@ -17,8 +17,7 @@ app.post("/api", (request, response) => {
 });
 
 function solveBoard(board, width, height, start, end) {
-    console.log("Starting solver on board:");
-    console.log(board);
+    console.log("Starting solver...");
 
     let graph = graphFromGrid(board, width, height);
 
@@ -80,7 +79,5 @@ function isNode(a, x, y){
     if (y >= a.length || y < 0 || x > a[0].length || x < 0) { // check if out-of-bounds
         return false;
     }
-
-    console.log(x, y);
     return a[y][x] !== "#";
 }

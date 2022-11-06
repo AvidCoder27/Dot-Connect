@@ -96,6 +96,12 @@ async function sendData() {
   const responseData = await response.json();
 
   console.log(responseData);
+  let nodesOutput = "";
+  for (let i = 0; i < responseData.solution.length; i++) {
+    nodesOutput += responseData.solution[i];
+    nodesOutput += ";\n";
+  }
+  document.getElementById("nodes_output").innerHTML = nodesOutput;
 }
 
 function movePlayer(direction){ // {x: horizontal, y: vertical}
