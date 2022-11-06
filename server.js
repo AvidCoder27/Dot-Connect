@@ -12,8 +12,8 @@ app.post("/api", (request, response) => {
 
     response.json({
         status: graphAndSolution.status,
-        graph: graphAndSolution.graph,
         solution: graphAndSolution.solution,
+        graph: graphAndSolution.graph,
     });
 });
 
@@ -46,7 +46,7 @@ function solveBoard(board, width, height, start, end) {
             // check for backtracking all the way to the beginning of the X array
             if (posX < 1) {
                 console.log("No solution found");
-                return {status: 'fail', graph, solution: null};
+                return {status: 'fail', solution: null, graph};
             }
         } else {
             x[posX] = k;
