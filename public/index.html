@@ -33,34 +33,12 @@
     <br>
     <hr>
     <div id="server_interaction">
-      <p>Wanna send some data to the server? Enter it below!</p>
-      <input type="text" id="data" name="data">
-      <button id="send" name="send" onclick="sendData()">Send</button>
+      <button id="send" name="send" onclick="sendData()">Send the level to the server to be solved</button>
     </div>
 
 
     <script src="sketch.js"></script>
     <script src="utils.js"></script>
     <script src="a_star.js"></script>
-
-    <script>
-      const dataElem = document.getElementById("data");
-
-      async function sendData() {
-          const data = {text: dataElem.value}; 
-          const options = {
-              method: "POST",
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(data)
-          };
-
-          const response = await fetch('/api', options);
-          const responseData = await response.json();
-          console.log(responseData);
-      }
-  </script>
-
   </body>
 </html>

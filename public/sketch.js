@@ -82,6 +82,21 @@ function draw() {
   if (showEnd) text("END", screenSpace(end.x), screenSpace(end.y));
 }
 
+async function sendData() {
+  const data = {message: "SOLVE THIS", board: originalBoard, width: boardWidth, height: boardHeight, start: start, end: end}; 
+  const options = {
+      method: "POST",
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+  };
+
+  const response = await fetch('/api', options);
+  const responseData = await response.json();
+  console.log(responseData);
+}
+
 function movePlayer(direction){ // {x: horizontal, y: vertical}
   const proposedPosition = addVector(currentPosition, direction);
 
