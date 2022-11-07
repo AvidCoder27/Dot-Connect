@@ -14,18 +14,18 @@
 
   <body>
     <div id="game">
-      <label for="difficulty">Choose Difficulty: </label>
-      <select id="difficulty" class="right-margin">
-        <option value="beginner">Beginner</option>
-        <option value="easy">Easy</option>
-        <option value="normal">Normal</option>
-        <option value="hard">Hard</option>
-        <option value="expert">Expert</option>
+      <label for="level">Choose Level: </label>
+      <select id="level" class="right-margin">
+        <option value="0">Level 0</option>
+        <option value="1">Level 1</option>
+        <option value="2">Level 2</option>
+        <option value="3">Level 3</option>
+        <option value="4">Level 4</option>
+        <option value="5">Level 5</option>
       </select>
   
-      <button id="new_game" name="new_game" class="right-margin" onclick="newGame()">New Game</button>
-      
-      <button id="restart" name="restart" class="right-margin" onclick="restart()">Restart</button>
+      <button id="restart" name="restart" class="right-margin" onclick="restartButton()">Restart</button>
+      <button id="new_game" name="new_game" class="right-margin" onclick="newgameButton()">New Game</button>
 
       <input type="checkbox" id="show_end" name="show_end">
       <label for="show_end">Show End</label>
@@ -34,10 +34,11 @@
     <hr>
     <div id="server_interaction">
       <button id="send" name="send" onclick="sendData()" class="right-margin">Send the level to the server to be solved</button>
-      <button id="execute" name="execute" onclick="executeSolution()" disabled>Execute the solution on the board</button>
-      <br>
       <p id="text_output_p">Press the solve button above to get the solution.</p>
       <textarea id="text_output" cols="70" rows="5" disabled></textarea>
+      <br>
+      <button id="execute" name="execute" onclick="executeSolution()" class="right-margin" disabled>Execute the solution on the board</button>
+      <button id="stop_execute" name="stop_execute" onclick="stopExecution()" disabled class="right-margin">Stop execution</button>
     </div>
 
     <script src="sketch.js"></script>

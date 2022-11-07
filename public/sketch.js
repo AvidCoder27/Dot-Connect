@@ -11,9 +11,10 @@ const EMPTY_COLOR = "#c8c8c8";
 const EXECUTE_BUTTON_DOM = document.getElementById("execute");
 const TEXT_OUTPUT_P_DOM = document.getElementById("text_output_p");
 const TEXT_OUTPUT_DOM = document.getElementById("text_output");
+const STOP_BUTTON_DOM = document.getElementById("stop_execute");
+const LEVEL_SELECTOR = document.getElementById("level");
 
 let BOARDS;
-let currentBoard = {difficulty: "beginner", index: 0};
 let originalBoard;
 let board;
 let boardWidth, boardHeight;
@@ -26,7 +27,7 @@ let moveQueue = [];
 let doMoves = false;
 let timeSinceLastMove = 0; // in milliseconds
 
-let difficultySelector;
+let selectedLevel;
 let showEnd = false;
 
 function preload(){
@@ -39,8 +40,7 @@ function setup() {
   cnv.parent('game');
 	background(255);
 
-  difficultySelector = select("#difficulty");
-  newGame();
+  newgameButton();
 }
 
 function draw() {
@@ -55,7 +55,6 @@ function draw() {
       doMoves = false;
     } else {
       movePlayer(currentMove);
-      console.log(currentMove);
     }
   }
 
@@ -100,66 +99,6 @@ function draw() {
   // if (showEnd) text("END", screenSpace(end.x), screenSpace(end.y));
 }
 
-async function sendData() {
-  const data = {message: "SOLVE THIS", board: originalBoard, width: boardWidth, height: boardHeight, start: start, end: end}; 
-  const options = {
-      method: "POST",
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-  };
-
-  const response = await fetch('/api', options);
-  const responseData = await response.json();
-
-  console.log(responseData);
-  solution = responseData.solution;
-  setServerDomState(true);
-}
-
-function executeSolution() {
-  // create an array filled all the nodes in boardOfNodes, but inside only 1 array
-  const unnestedNodes = [];
-  for (let y = 0; y < boardHeight; y++) {
-    for (let x = 0; x < boardWidth; x++) {
-      unnestedNodes.push(boardOfNodes[y][x]);
-    }
-  }
-
-  // create an array filled with the solution as items, each one with an x and y, in the order that they should be executed 
-  const solutionAsCoords = [];
-  for (let i = 0; i < solution.length; i++) {
-    const unnestedSolution = unnestedNodes.indexOf(solution[i]);
-    solutionAsCoords.push({
-      x: unnestedSolution%boardWidth,
-      y: Math.floor(unnestedSolution/boardHeight)
-    })
-  }
-
-  // fill up move queue with the difference between each step in solutionAsCoords, essentially the input instructions
-  //let deltaX, deltaY;
-  for (let i = 1; i < solutionAsCoords.length; i++) { // start at 1 because the first item in solutions is the starting position
-    moveQueue.push(subtractVector(solutionAsCoords[i], solutionAsCoords[i-1]));
-  }
-
-  doMoves = true;
-  setBoard(currentBoard.difficulty, currentBoard.index);
-}
-
-function setServerDomState(enabled) {
-  if (enabled) {
-    TEXT_OUTPUT_P_DOM.innerHTML = "Below is the solution:";
-    TEXT_OUTPUT_DOM.innerHTML = solution.toString().replaceAll(",", " > ");
-  } else {
-    TEXT_OUTPUT_P_DOM.innerHTML = "Press the solve button above to get the solution.";
-    TEXT_OUTPUT_DOM.innerHTML = "";
-  }
-  TEXT_OUTPUT_DOM.disabled = !enabled;
-  EXECUTE_BUTTON_DOM.disabled = !enabled;
-}
-
-
 function movePlayer(direction){ // {x: horizontal, y: vertical}
   const proposedPosition = addVector(currentPosition, direction);
 
@@ -189,67 +128,57 @@ function undoMove(){
   }
 }
 
-function keyPressed(){
-  if (!doMoves) {
-    switch(keyCode) {
-      case LEFT_ARROW:
-        movePlayer({x: -1, y: 0});
-        break;
-      case RIGHT_ARROW:
-        movePlayer({x: 1, y: 0});
-        break;
-      case UP_ARROW:
-        movePlayer({x: 0, y: -1});
-        break;
-      case DOWN_ARROW:
-        movePlayer({x: 0, y: 1});
-        break;
-      case 90: // Z key
-        undoMove();
-        break;
-      case 82: // R key - probably shouldn't be disabled when doMoves is true, but whatever
-        restart();
-      default:
-        //console.log(keyCode);
+function executeSolution() {
+  resetBoards();
+
+  // create an array filled all the nodes in boardOfNodes, but inside only 1 array
+  const unnestedNodes = [];
+  for (let y = 0; y < boardHeight; y++) {
+    for (let x = 0; x < boardWidth; x++) {
+      unnestedNodes.push(boardOfNodes[y][x]);
     }
   }
+
+  // create an array filled with the solution as items, each one with an x and y, in the order that they should be executed 
+  const solutionAsCoords = [];
+  for (let i = 0; i < solution.length; i++) {
+    const unnestedSolution = unnestedNodes.indexOf(solution[i]);
+    solutionAsCoords.push({
+      x: unnestedSolution%boardWidth,
+      y: Math.floor(unnestedSolution/boardHeight)
+    })
+  }
+
+  // fill up move queue with the difference between each step in solutionAsCoords, essentially the input instructions
+  moveQueue = [];
+  for (let i = 1; i < solutionAsCoords.length; i++) { // start at 1 because the first item in solutions is the starting position
+    moveQueue.push(subtractVector(solutionAsCoords[i], solutionAsCoords[i-1]));
+  }
+  doMoves = true;
+  STOP_BUTTON_DOM.disabled = false;
+  timeSinceLastMove = 0;
 }
 
-function newGame(){
-  const difficulty = difficultySelector.value();
-  let boardsOfDifficulty = Object.keys(BOARDS[difficulty]);
-
-  if (boardsOfDifficulty.length > 1) {
-    boardsOfDifficulty.splice(currentBoard.index.toString(), 1);
-  }
-  setBoard(difficulty, random(boardsOfDifficulty));
-  doMoves = false;
-  moveQueue = [];
-
-  let boardIndex = 0;
-  for (let y = 0; y < boardHeight; y++){
-    boardOfNodes.push([]);
-    for (let x = 0; x < boardWidth; x++){
-      boardOfNodes[y].push([]);
-      if (originalBoard[y][x] !== 1) {
-        boardOfNodes[y][x] = boardIndex;
-        boardIndex++;
-      } else boardOfNodes[y][x] = -1;
-    }
-  }
-
+function newgameButton() {
+  selectedLevel = LEVEL_SELECTOR.value;
   setServerDomState(false);
+  restartButton();
 }
-function restart(){
-  setBoard(currentBoard.difficulty, currentBoard.index);
+
+function restartButton(){
+  stopExecution();
+  resetBoards();
+}
+
+function stopExecution() {
+  STOP_BUTTON_DOM.disabled = true;
   doMoves = false;
   moveQueue = [];
 }
 
-function setBoard(difficulty, index){
-  currentBoard = {difficulty: difficulty, index: index};
-  p = BOARDS[difficulty][index];
-  originalBoard = p.board;
+function resetBoards() {
+  p = BOARDS[selectedLevel];
+  originalBoard = p.board
 
   boardWidth = p.width;
   boardHeight = p.height;
@@ -269,5 +198,75 @@ function setBoard(difficulty, index){
   }
   setCellValue(start, "ST");
 
+  let boardIndex = 0;
+  boardOfNodes = [];
+    for (let y = 0; y < boardHeight; y++){
+      boardOfNodes.push([]);
+      for (let x = 0; x < boardWidth; x++){
+        boardOfNodes[y].push([]);
+        if (originalBoard[y][x] !== 1) {
+          boardOfNodes[y][x] = boardIndex;
+          boardIndex++;
+        } else boardOfNodes[y][x] = -1;
+      }
+    }
+
   resizeCanvas(boardWidth*CELL_SIZE, boardHeight*CELL_SIZE);
+}
+
+function setServerDomState(enabled) {
+  if (enabled) {
+    TEXT_OUTPUT_P_DOM.innerHTML = "Below is the solution:";
+    TEXT_OUTPUT_DOM.innerHTML = solution.toString().replaceAll(",", " > ");
+  } else {
+    TEXT_OUTPUT_P_DOM.innerHTML = "Press the solve button above to get the solution.";
+    TEXT_OUTPUT_DOM.innerHTML = "";
+    STOP_BUTTON_DOM.disabled = true;
+  }
+  TEXT_OUTPUT_DOM.disabled = !enabled;
+  EXECUTE_BUTTON_DOM.disabled = !enabled;
+}
+
+async function sendData() {
+  const data = {message: "SOLVE THIS", board: originalBoard, width: boardWidth, height: boardHeight, start: start, end: end}; 
+  const options = {
+      method: "POST",
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+  };
+
+  const response = await fetch('/api', options);
+  const responseData = await response.json();
+
+  console.log(responseData);
+  solution = responseData.solution;
+  setServerDomState(true);
+}
+
+function keyPressed(){
+  if (!doMoves) {
+    switch(keyCode) {
+      case LEFT_ARROW:
+        movePlayer({x: -1, y: 0});
+        break;
+      case RIGHT_ARROW:
+        movePlayer({x: 1, y: 0});
+        break;
+      case UP_ARROW:
+        movePlayer({x: 0, y: -1});
+        break;
+      case DOWN_ARROW:
+        movePlayer({x: 0, y: 1});
+        break;
+      case 90: // Z key
+        undoMove();
+        break;
+      case 82: // R key - probably shouldn't be disabled when doMoves is true, but whatever
+        restartButton();
+      default:
+        //console.log(keyCode);
+    }
+  }
 }
