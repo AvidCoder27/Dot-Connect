@@ -37,3 +37,16 @@ function checkForFullBoard(){
     for (let y = 0; y < boardHeight; y++) for (let x = 0; x < boardWidth; x++) if (!board[y][x]) return false;
     return true;
 }
+
+function setServerDomState(enabled) {
+  if (enabled) {
+    TEXT_OUTPUT_P.innerHTML = "Below is the solution:";
+    TEXT_OUTPUT.innerHTML = solution.toString().replaceAll(",", " > ");
+  } else {
+    TEXT_OUTPUT_P.innerHTML = "Press the solve button above to get the solution.";
+    TEXT_OUTPUT.innerHTML = "";
+    STOP_BUTTON.disabled = true;
+  }
+  TEXT_OUTPUT.disabled = !enabled;
+  EXECUTE_BUTTON.disabled = !enabled;
+}
