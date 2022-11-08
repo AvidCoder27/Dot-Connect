@@ -17,3 +17,22 @@ table, th, td {
   border-collapse: collapse;
   padding: 5px;
 }
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 220px;
+  height: 7px;
+  transform: translateY(10%);
+  background: linear-gradient(to right, #e93535, #ff9500, #e5ff00, #47e652);
+  border-radius: 5px;
+}
+
+/* Input Thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #0091ff;
+  cursor: ew-resize;
+}
