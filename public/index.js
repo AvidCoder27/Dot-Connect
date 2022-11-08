@@ -1,11 +1,3 @@
-const CELL_SIZE = 60;
-
-const START_COLOR = "#f7bc31";
-const WALL_COLOR = "#323232";
-const PLAYER_COLOR = "#0384fc";
-const BAD_COLOR = "#ff0000";
-const EMPTY_COLOR = "#c8c8c8";
-
 const TEXT_OUTPUT_P = document.getElementById("text_output_p");
 const TEXT_OUTPUT = document.getElementById("text_output");
 const EXECUTE_BUTTON = document.getElementById("execute");
@@ -246,8 +238,6 @@ function getColorOfCell(x, y, l){
         return WALL_COLOR;
       case 2:
         return PLAYER_COLOR;
-      case 3:
-        return BAD_COLOR;
       case 8:
         return START_COLOR;
     }
