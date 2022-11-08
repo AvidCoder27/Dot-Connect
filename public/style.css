@@ -1,11 +1,19 @@
-html, button, select{
+* {
   font-size: large;
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 5px;
 }
 
 canvas {
   display: block;
 }
 
-.right-margin {
-  margin: 5px 30px 5px 5px
+hr {
+  margin: 20px 5px;
+}
+
+table, th, td {
+  border: dotted 1px black; 
+  border-collapse: collapse;
+  padding: 5px;
 }
