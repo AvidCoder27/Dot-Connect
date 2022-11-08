@@ -1,7 +1,6 @@
 const CELL_SIZE = 60;
 
 const START_COLOR = "#f7bc31";
-const END_COLOR = "#51db12";
 const WALL_COLOR = "#323232";
 const PLAYER_COLOR = "#0384fc";
 const BAD_COLOR = "#ff0000";
@@ -13,13 +12,12 @@ const EXECUTE_BUTTON = document.getElementById("execute");
 const STOP_BUTTON = document.getElementById("stop_execute");
 const SPEED_SLIDER = document.getElementById("move_speed");
 const LEVEL_SELECTOR = document.getElementById("level");
-const SHOW_END_CHECKBOX = document.getElementById("show_end");
 
 let BOARDS;
 let originalBoard;
 let board;
 let boardWidth, boardHeight;
-let start, end;
+let start;
 let currentPosition;
 
 let boardOfNodes = [];
@@ -30,7 +28,6 @@ let timeSinceLastMove = 0; // in milliseconds
 let moveTime = 170; // in milliseconds
 
 let selectedLevel;
-let showEnd = false;
 
 function preload(){
   const jsonURL = "./levels.json"
@@ -45,7 +42,6 @@ function setup() {
 
 function draw() {
   timeSinceLastMove += deltaTime;
-  showEnd = SHOW_END_CHECKBOX.checked;
   moveTime = 800 - SPEED_SLIDER.value;
   background(255);
 
@@ -115,7 +111,7 @@ function movePlayer(direction){ // {x: horizontal, y: vertical}
 
 function undoMove(){
   const lastMove = getCellValue(currentPosition);
-  // make sure the current cell is not a start or end cell
+  // make sure the current cell is not a start cell
   if (typeof(lastMove) !== "string") {
     setCellValue(currentPosition, null);
     currentPosition = subtractVector(currentPosition, lastMove);
@@ -196,7 +192,6 @@ function resetBoards() {
   boardHeight = p.height;
 
   start = p.start;
-  end = p.end;
   currentPosition = {...start};
 
   // create an empty board, except for a player spot at the start position
@@ -255,9 +250,6 @@ function getColorOfCell(x, y, l){
         return BAD_COLOR;
       case 8:
         return START_COLOR;
-      case 9:
-        if (showEnd) return END_COLOR;
-        return EMPTY_COLOR;
     }
 }
 
