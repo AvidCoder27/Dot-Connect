@@ -153,6 +153,12 @@ function executeSolution() {
   timeSinceLastMove = 0;
 }
 
+function stopExecution() {
+  STOP_BUTTON.disabled = true;
+  doMoves = false;
+  moveQueue = [];
+}
+
 function newgameButton() {
   selectedLevel = LEVEL_SELECTOR.value;
   setServerDomState(false);
@@ -162,12 +168,6 @@ function newgameButton() {
 function restartButton(){
   stopExecution();
   resetBoards();
-}
-
-function stopExecution() {
-  STOP_BUTTON.disabled = true;
-  doMoves = false;
-  moveQueue = [];
 }
 
 function resetBoards() {
@@ -206,46 +206,4 @@ function resetBoards() {
     }
 
   resizeCanvas(boardWidth*CELL_SIZE, boardHeight*CELL_SIZE);
-}
-
-async function sendData() {
-  const data = {message: "SOLVE THIS", board: originalBoard, width: boardWidth, height: boardHeight, start: start, end: end}; 
-  const options = {
-      method: "POST",
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-  };
-
-  const response = await fetch('/api', options);
-  const responseData = await response.json();
-
-  console.log(responseData);
-  solution = responseData.solution;
-  setServerDomState(true);
-}
-
-function keyPressed(){
-  if (!doMoves) {
-    switch(keyCode) {
-      case LEFT_ARROW:
-        movePlayer({x: -1, y: 0});
-        break;
-      case RIGHT_ARROW:
-        movePlayer({x: 1, y: 0});
-        break;
-      case UP_ARROW:
-        movePlayer({x: 0, y: -1});
-        break;
-      case DOWN_ARROW:
-        movePlayer({x: 0, y: 1});
-        break;
-      case 90: // Z key
-        undoMove();
-        break;
-      case 82: // R key - probably shouldn't be disabled when doMoves is true, but whatever
-        restartButton();
-    }
-  }
 }
