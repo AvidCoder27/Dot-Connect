@@ -1,5 +1,4 @@
 const CELL_SIZE = 60;
-const MOVE_TIME = 250; // in milliseconds
 
 const START_COLOR = "#f7bc31";
 const END_COLOR = "#51db12";
@@ -8,12 +7,15 @@ const PLAYER_COLOR = "#0384fc";
 const BAD_COLOR = "#ff0000";
 const EMPTY_COLOR = "#c8c8c8";
 
-const EXECUTE_BUTTON_DOM = document.getElementById("execute");
-const TEXT_OUTPUT_P_DOM = document.getElementById("text_output_p");
-const TEXT_OUTPUT_DOM = document.getElementById("text_output");
+const TEXT_OUTPUT_P = document.getElementById("text_output_p");
+const TEXT_OUTPUT = document.getElementById("text_output");
+const EXECUTE_BUTTON = document.getElementById("execute");
+const STOP_BUTTON = document.getElementById("stop_execute");
+const SPEED_SLIDER = document.getElementById("move_speed");
+const LEVEL_SELECTOR = document.getElementById("level");
+const SHOW_END_CHECKBOX = document.getElementById("show_end");
 
 let BOARDS;
-let currentBoard = {difficulty: "beginner", index: 0};
 let originalBoard;
 let board;
 let boardWidth, boardHeight;
@@ -25,8 +27,9 @@ let solution;
 let moveQueue = [];
 let doMoves = false;
 let timeSinceLastMove = 0; // in milliseconds
+let moveTime = 170; // in milliseconds
 
-let difficultySelector;
+let selectedLevel;
 let showEnd = false;
 
 function preload(){
@@ -37,25 +40,22 @@ function preload(){
 function setup() {
 	const cnv = createCanvas(100,100);
   cnv.parent('game');
-	background(255);
-
-  difficultySelector = select("#difficulty");
-  newGame();
+  newgameButton();
 }
 
 function draw() {
   timeSinceLastMove += deltaTime;
-  showEnd = document.getElementById("show_end").checked;
+  showEnd = SHOW_END_CHECKBOX.checked;
+  moveTime = 800 - SPEED_SLIDER.value;
   background(255);
 
-  if (timeSinceLastMove > MOVE_TIME && doMoves){
+  if (timeSinceLastMove > moveTime && doMoves){
     timeSinceLastMove = 0;
     const currentMove = moveQueue.shift();
     if (currentMove === undefined) {
       doMoves = false;
     } else {
       movePlayer(currentMove);
-      console.log(currentMove);
     }
   }
 
@@ -93,11 +93,132 @@ function draw() {
   for (let y = 0; y < boardHeight; y++) for (let x = 0; x < boardWidth; x++) if (boardOfNodes[y][x] !== -1) 
     text(boardOfNodes[y][x], screenSpace(x), screenSpace(y));
   pop();
+}
 
-  // fill(0);
-  // textAlign("center");
-  // text("START", screenSpace(start.x), screenSpace(start.y));
-  // if (showEnd) text("END", screenSpace(end.x), screenSpace(end.y));
+function movePlayer(direction){ // {x: horizontal, y: vertical}
+  const proposedPosition = addVector(currentPosition, direction);
+
+  if(areVectorsEqual(proposedPosition, subtractVector(currentPosition, getCellValue(currentPosition)))) undoMove();
+
+  // check if the proposedPosition is invalid
+  if ( !(
+    proposedPosition.x > boardWidth || proposedPosition.y > boardHeight-1 || proposedPosition.x < 0 || proposedPosition.y < 0 ||
+    getCellValue(proposedPosition) !== null || originalBoard[proposedPosition.y][proposedPosition.x] === 1
+  )) {
+    currentPosition = {...proposedPosition};
+    // puts the direction into the board to represent that the player moved into that cell
+    setCellValue(currentPosition, direction);
+    
+    checkForFullBoard() ? alert("You won!") : null;
+  }
+}
+
+function undoMove(){
+  const lastMove = getCellValue(currentPosition);
+  // make sure the current cell is not a start or end cell
+  if (typeof(lastMove) !== "string") {
+    setCellValue(currentPosition, null);
+    currentPosition = subtractVector(currentPosition, lastMove);
+  }
+}
+
+function executeSolution() {
+  resetBoards();
+
+  // create an array filled all the nodes in boardOfNodes, but inside only 1 array
+  const unnestedNodes = [];
+  for (let y = 0; y < boardHeight; y++) {
+    for (let x = 0; x < boardWidth; x++) {
+      unnestedNodes.push(boardOfNodes[y][x]);
+    }
+  }
+
+  // create an array filled with the solution as items, each one with an x and y, in the order that they should be executed 
+  const solutionAsCoords = [];
+  for (let i = 0; i < solution.length; i++) {
+    const unnestedSolution = unnestedNodes.indexOf(solution[i]);
+    solutionAsCoords.push({
+      x: unnestedSolution%boardWidth,
+      y: Math.floor(unnestedSolution/boardWidth)
+    })
+  }
+
+  // fill up move queue with the difference between each step in solutionAsCoords, essentially the input instructions
+  moveQueue = [];
+  for (let i = 1; i < solutionAsCoords.length; i++) { // start at 1 because the first item in solutions is the starting position
+    moveQueue.push(subtractVector(solutionAsCoords[i], solutionAsCoords[i-1]));
+  }
+  doMoves = true;
+  STOP_BUTTON.disabled = false;
+  timeSinceLastMove = 0;
+}
+
+function newgameButton() {
+  selectedLevel = LEVEL_SELECTOR.value;
+  setServerDomState(false);
+  restartButton();
+}
+
+function restartButton(){
+  stopExecution();
+  resetBoards();
+}
+
+function stopExecution() {
+  STOP_BUTTON.disabled = true;
+  doMoves = false;
+  moveQueue = [];
+}
+
+function resetBoards() {
+  p = BOARDS[selectedLevel];
+  originalBoard = p.board
+
+  boardWidth = p.width;
+  boardHeight = p.height;
+
+  start = p.start;
+  end = p.end;
+  currentPosition = {...start};
+
+  // create an empty board, except for a player spot at the start position
+  board = [];
+  for (let y = 0; y < boardHeight; y++) {
+    board[y] = []
+    for (let x = 0; x < boardWidth; x++) {
+      if (originalBoard[y][x] === 1)  board[y][x] = "WL";
+      else board[y][x] = null;
+    }
+  }
+  setCellValue(start, "ST");
+
+  let boardIndex = 0;
+  boardOfNodes = [];
+    for (let y = 0; y < boardHeight; y++){
+      boardOfNodes.push([]);
+      for (let x = 0; x < boardWidth; x++){
+        boardOfNodes[y].push([]);
+        if (originalBoard[y][x] !== 1) {
+          boardOfNodes[y][x] = boardIndex;
+          boardIndex++;
+        } else boardOfNodes[y][x] = -1;
+      }
+    }
+
+  resizeCanvas(boardWidth*CELL_SIZE, boardHeight*CELL_SIZE);
+}
+
+function setServerDomState(enabled) {
+  if (enabled) {
+    TEXT_OUTPUT_P.innerHTML = "Below is the solution:";
+    TEXT_OUTPUT.innerHTML = solution.toString().replaceAll(",", " > ");
+  } else {
+    TEXT_OUTPUT_P.innerHTML = "Press the solve button above to get the solution.";
+    TEXT_OUTPUT.innerHTML = "";
+    STOP_BUTTON.disabled = true;
+  }
+  TEXT_OUTPUT.disabled = !enabled;
+  EXECUTE_BUTTON.disabled = !enabled;
 }
 
 async function sendData() {
@@ -116,77 +237,6 @@ async function sendData() {
   console.log(responseData);
   solution = responseData.solution;
   setServerDomState(true);
-}
-
-function executeSolution() {
-  // create an array filled all the nodes in boardOfNodes, but inside only 1 array
-  const unnestedNodes = [];
-  for (let y = 0; y < boardHeight; y++) {
-    for (let x = 0; x < boardWidth; x++) {
-      unnestedNodes.push(boardOfNodes[y][x]);
-    }
-  }
-
-  // create an array filled with the solution as items, each one with an x and y, in the order that they should be executed 
-  const solutionAsCoords = [];
-  for (let i = 0; i < solution.length; i++) {
-    const unnestedSolution = unnestedNodes.indexOf(solution[i]);
-    solutionAsCoords.push({
-      x: unnestedSolution%boardWidth,
-      y: Math.floor(unnestedSolution/boardHeight)
-    })
-  }
-
-  // fill up move queue with the difference between each step in solutionAsCoords, essentially the input instructions
-  //let deltaX, deltaY;
-  for (let i = 1; i < solutionAsCoords.length; i++) { // start at 1 because the first item in solutions is the starting position
-    moveQueue.push(subtractVector(solutionAsCoords[i], solutionAsCoords[i-1]));
-  }
-
-  doMoves = true;
-  setBoard(currentBoard.difficulty, currentBoard.index);
-}
-
-function setServerDomState(enabled) {
-  if (enabled) {
-    TEXT_OUTPUT_P_DOM.innerHTML = "Below is the solution:";
-    TEXT_OUTPUT_DOM.innerHTML = solution.toString().replaceAll(",", " > ");
-  } else {
-    TEXT_OUTPUT_P_DOM.innerHTML = "Press the solve button above to get the solution.";
-    TEXT_OUTPUT_DOM.innerHTML = "";
-  }
-  TEXT_OUTPUT_DOM.disabled = !enabled;
-  EXECUTE_BUTTON_DOM.disabled = !enabled;
-}
-
-
-function movePlayer(direction){ // {x: horizontal, y: vertical}
-  const proposedPosition = addVector(currentPosition, direction);
-
-  if(areVectorsEqual(proposedPosition, subtractVector(currentPosition, getCellValue(currentPosition)))) undoMove();
-
-  // check if the proposedPosition is invalid
-  if ( !(
-    proposedPosition.x > boardWidth || proposedPosition.y > boardHeight-1 || proposedPosition.x < 0 || proposedPosition.y < 0 ||
-    getCellValue(proposedPosition) !== null || originalBoard[proposedPosition.y][proposedPosition.x] === 1
-  )) {
-    currentPosition = {...proposedPosition};
-    // puts the direction into the board to represent that the player moved into that cell
-    setCellValue(currentPosition, direction);
-    
-    // if (areVectorsEqual(currentPosition, end)) {
-      checkForFullBoard() ? alert("You won!") : null;
-    // }
-  }
-}
-
-function undoMove(){
-  const lastMove = getCellValue(currentPosition);
-  // make sure the current cell is not a start or end cell
-  if (typeof(lastMove) !== "string") {
-    setCellValue(currentPosition, null);
-    currentPosition = subtractVector(currentPosition, lastMove);
-  }
 }
 
 function keyPressed(){
@@ -208,66 +258,9 @@ function keyPressed(){
         undoMove();
         break;
       case 82: // R key - probably shouldn't be disabled when doMoves is true, but whatever
-        restart();
+        restartButton();
       default:
         //console.log(keyCode);
     }
   }
-}
-
-function newGame(){
-  const difficulty = difficultySelector.value();
-  let boardsOfDifficulty = Object.keys(BOARDS[difficulty]);
-
-  if (boardsOfDifficulty.length > 1) {
-    boardsOfDifficulty.splice(currentBoard.index.toString(), 1);
-  }
-  setBoard(difficulty, random(boardsOfDifficulty));
-  doMoves = false;
-  moveQueue = [];
-
-  let boardIndex = 0;
-  for (let y = 0; y < boardHeight; y++){
-    boardOfNodes.push([]);
-    for (let x = 0; x < boardWidth; x++){
-      boardOfNodes[y].push([]);
-      if (originalBoard[y][x] !== 1) {
-        boardOfNodes[y][x] = boardIndex;
-        boardIndex++;
-      } else boardOfNodes[y][x] = -1;
-    }
-  }
-
-  setServerDomState(false);
-}
-function restart(){
-  setBoard(currentBoard.difficulty, currentBoard.index);
-  doMoves = false;
-  moveQueue = [];
-}
-
-function setBoard(difficulty, index){
-  currentBoard = {difficulty: difficulty, index: index};
-  p = BOARDS[difficulty][index];
-  originalBoard = p.board;
-
-  boardWidth = p.width;
-  boardHeight = p.height;
-
-  start = p.start;
-  end = p.end;
-  currentPosition = {...start};
-
-  // create an empty board, except for a player spot at the start position
-  board = [];
-  for (let y = 0; y < boardHeight; y++) {
-    board[y] = []
-    for (let x = 0; x < boardWidth; x++) {
-      if (originalBoard[y][x] === 1)  board[y][x] = "WL";
-      else board[y][x] = null;
-    }
-  }
-  setCellValue(start, "ST");
-
-  resizeCanvas(boardWidth*CELL_SIZE, boardHeight*CELL_SIZE);
 }
