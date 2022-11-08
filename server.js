@@ -8,17 +8,20 @@ app.use(express.json({ limit: '1mb' }));
 app.post("/api", (request, response) => {
     console.log("Request recieved: " + request.body.message);
     
-    const graphAndSolution = solveBoard(request.body.board, request.body.width, request.body.height, request.body.start, request.body.end);
+    const returnObject = solveBoard(request.body.board, request.body.width, request.body.height);
 
     response.json({
-        status: graphAndSolution.status,
-        solution: graphAndSolution.solution,
-        graph: graphAndSolution.graph,
+        status: returnObject.status,
+        time: returnObject.time,
+        solution: returnObject.solution,
     });
 });
 
-function solveBoard(board, width, height, start, end) {
+function solveBoard(board, width, height) {
     console.log("Starting solver...");
+    const START_TIME = Date.now();
+    let elapsedTime = () => Date.now() - START_TIME;
+    
     const graphAndStartIndex = graphFromGrid(board, width, height);
     const graph = graphAndStartIndex.nodes;
     const startIndex = graphAndStartIndex.startIndex;
@@ -45,8 +48,8 @@ function solveBoard(board, width, height, start, end) {
             posX--; //move back one space in the X array
             // check for backtracking all the way to the beginning of the X array
             if (posX < 1) {
-                console.log("No solution found");
-                return {status: 'fail', solution: null, graph};
+                console.log("Failed to solve in " + elapsedTime() + " ms");
+                return {status: 'fail', time: elapsedTime(), solution: null};
             }
         } else {
             x[posX] = k;
@@ -55,8 +58,8 @@ function solveBoard(board, width, height, start, end) {
         }
     }
 
-    console.log("Solved!");
-    return {status: 'success', graph, solution: x};
+    console.log("Solved in " + elapsedTime() + " ms");
+    return {status: 'success', time: elapsedTime(), solution: x};
 }
 
 function graphFromGrid(g, width, height){

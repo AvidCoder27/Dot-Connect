@@ -38,24 +38,6 @@ function checkForFullBoard(){
     return true;
 }
 
-async function sendData() {
-  const data = {message: "SOLVE THIS", board: originalBoard, width: boardWidth, height: boardHeight, start: start, end: end}; 
-  const options = {
-      method: "POST",
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-  };
-
-  const response = await fetch('/api', options);
-  const responseData = await response.json();
-
-  console.log(responseData);
-  solution = responseData.solution;
-  setServerDomState(true);
-}
-
 function keyPressed(){
   if (!doMoves) {
     switch(keyCode) {
