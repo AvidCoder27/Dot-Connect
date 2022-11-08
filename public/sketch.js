@@ -1,5 +1,4 @@
 const CELL_SIZE = 60;
-const MOVE_TIME = 250; // in milliseconds
 
 const START_COLOR = "#f7bc31";
 const END_COLOR = "#51db12";
@@ -8,11 +7,13 @@ const PLAYER_COLOR = "#0384fc";
 const BAD_COLOR = "#ff0000";
 const EMPTY_COLOR = "#c8c8c8";
 
-const EXECUTE_BUTTON_DOM = document.getElementById("execute");
-const TEXT_OUTPUT_P_DOM = document.getElementById("text_output_p");
-const TEXT_OUTPUT_DOM = document.getElementById("text_output");
-const STOP_BUTTON_DOM = document.getElementById("stop_execute");
+const TEXT_OUTPUT_P = document.getElementById("text_output_p");
+const TEXT_OUTPUT = document.getElementById("text_output");
+const EXECUTE_BUTTON = document.getElementById("execute");
+const STOP_BUTTON = document.getElementById("stop_execute");
+const SPEED_SLIDER = document.getElementById("move_speed");
 const LEVEL_SELECTOR = document.getElementById("level");
+const SHOW_END_CHECKBOX = document.getElementById("show_end");
 
 let BOARDS;
 let originalBoard;
@@ -26,6 +27,7 @@ let solution;
 let moveQueue = [];
 let doMoves = false;
 let timeSinceLastMove = 0; // in milliseconds
+let moveTime = 170; // in milliseconds
 
 let selectedLevel;
 let showEnd = false;
@@ -38,17 +40,16 @@ function preload(){
 function setup() {
 	const cnv = createCanvas(100,100);
   cnv.parent('game');
-	background(255);
-
   newgameButton();
 }
 
 function draw() {
   timeSinceLastMove += deltaTime;
-  showEnd = document.getElementById("show_end").checked;
+  showEnd = SHOW_END_CHECKBOX.checked;
+  moveTime = 800 - SPEED_SLIDER.value;
   background(255);
 
-  if (timeSinceLastMove > MOVE_TIME && doMoves){
+  if (timeSinceLastMove > moveTime && doMoves){
     timeSinceLastMove = 0;
     const currentMove = moveQueue.shift();
     if (currentMove === undefined) {
@@ -92,11 +93,6 @@ function draw() {
   for (let y = 0; y < boardHeight; y++) for (let x = 0; x < boardWidth; x++) if (boardOfNodes[y][x] !== -1) 
     text(boardOfNodes[y][x], screenSpace(x), screenSpace(y));
   pop();
-
-  // fill(0);
-  // textAlign("center");
-  // text("START", screenSpace(start.x), screenSpace(start.y));
-  // if (showEnd) text("END", screenSpace(end.x), screenSpace(end.y));
 }
 
 function movePlayer(direction){ // {x: horizontal, y: vertical}
@@ -113,9 +109,7 @@ function movePlayer(direction){ // {x: horizontal, y: vertical}
     // puts the direction into the board to represent that the player moved into that cell
     setCellValue(currentPosition, direction);
     
-    // if (areVectorsEqual(currentPosition, end)) {
-      checkForFullBoard() ? alert("You won!") : null;
-    // }
+    checkForFullBoard() ? alert("You won!") : null;
   }
 }
 
@@ -145,7 +139,7 @@ function executeSolution() {
     const unnestedSolution = unnestedNodes.indexOf(solution[i]);
     solutionAsCoords.push({
       x: unnestedSolution%boardWidth,
-      y: Math.floor(unnestedSolution/boardHeight)
+      y: Math.floor(unnestedSolution/boardWidth)
     })
   }
 
@@ -155,7 +149,7 @@ function executeSolution() {
     moveQueue.push(subtractVector(solutionAsCoords[i], solutionAsCoords[i-1]));
   }
   doMoves = true;
-  STOP_BUTTON_DOM.disabled = false;
+  STOP_BUTTON.disabled = false;
   timeSinceLastMove = 0;
 }
 
@@ -171,7 +165,7 @@ function restartButton(){
 }
 
 function stopExecution() {
-  STOP_BUTTON_DOM.disabled = true;
+  STOP_BUTTON.disabled = true;
   doMoves = false;
   moveQueue = [];
 }
@@ -216,15 +210,15 @@ function resetBoards() {
 
 function setServerDomState(enabled) {
   if (enabled) {
-    TEXT_OUTPUT_P_DOM.innerHTML = "Below is the solution:";
-    TEXT_OUTPUT_DOM.innerHTML = solution.toString().replaceAll(",", " > ");
+    TEXT_OUTPUT_P.innerHTML = "Below is the solution:";
+    TEXT_OUTPUT.innerHTML = solution.toString().replaceAll(",", " > ");
   } else {
-    TEXT_OUTPUT_P_DOM.innerHTML = "Press the solve button above to get the solution.";
-    TEXT_OUTPUT_DOM.innerHTML = "";
-    STOP_BUTTON_DOM.disabled = true;
+    TEXT_OUTPUT_P.innerHTML = "Press the solve button above to get the solution.";
+    TEXT_OUTPUT.innerHTML = "";
+    STOP_BUTTON.disabled = true;
   }
-  TEXT_OUTPUT_DOM.disabled = !enabled;
-  EXECUTE_BUTTON_DOM.disabled = !enabled;
+  TEXT_OUTPUT.disabled = !enabled;
+  EXECUTE_BUTTON.disabled = !enabled;
 }
 
 async function sendData() {
