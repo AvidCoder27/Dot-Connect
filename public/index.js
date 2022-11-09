@@ -161,8 +161,12 @@ async function sendData() {
   const responseData = await response.json();
 
   console.log(responseData);
-  solution = responseData.solution;
-  setServerDomState(true);
+  if (responseData.status === "success") {
+    solution = responseData.solution;
+    setServerDomState(true);
+  } else {
+    alert("There's no solution for this board!");
+  }
 }
 
 function newgameButton() {
