@@ -23,6 +23,8 @@
               <option value="3">Level 3</option>
               <option value="4">Level 4</option>
               <option value="5">Level 5</option>
+              <option value="6">Level 6</option>
+              <option value="7">Level 7</option>
             </select>
           </td>
           <td>
@@ -51,19 +53,21 @@
         <tr>
           <td>
             <label for="move_speed">Move speed</label>
-            <input name="move_speed" id="move_speed" type="range" min="1" max="800" value="500">
+            <input class="slider gradient-slider" name="move_speed" id="move_speed" type="range" min="1" max="800" value="500">
           </td>
           <td>
             <button id="stop_execute" name="stop_execute" onclick="stopExecution()" disabled>Stop execution</button>
           </td>
         </tr>
+        <tr>
+          <td colspan="2">
+            <p id="text_output_p">Press the solve button above to get the solution.</p>
+            <textarea id="text_output" cols="50" rows="8" disabled></textarea>
+          </td>
+        </tr>
       </table>
-      <br>
-      <div>
-        <p id="text_output_p">Press the solve button above to get the solution.</p>
-        <textarea id="text_output" cols="70" rows="5" disabled></textarea>
-      </div>
     </div>
     <script src="index.js"></script>
+    <script src="utils.js"></script>
   </body>
 </html>
