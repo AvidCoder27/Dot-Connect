@@ -51,6 +51,7 @@ table, th, td {
 
 .slider {
   -webkit-appearance: none;
+  appearance: none;
   width: 220px;
   height: 7px;
   transform: translateY(10%);
@@ -60,6 +61,7 @@ table, th, td {
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none;
   height: 20px;
   width: 20px;
   border-radius: 50%;
