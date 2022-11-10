@@ -26,24 +26,46 @@ function solveBoard(board, width, height) {
     const graph = graphAndStartIndex.nodes;
     const startIndex = graphAndStartIndex.startIndex;
 
+    const altGraph = new Array(graph.length);
+    for (let i = 0; i < graph.length; i++) {
+        altGraph[i] =  [];
+        for (let j = 0; j < graph.length; j++) {
+            if (graph[i][j] === 1) {
+                altGraph[i].push(j);
+            }
+        }
+    }
+    
     const x = new Array(graph.length).fill(-1);
     x[0] = startIndex;
     let posX = 1;
 
     while (posX < x.length) { // loop while the current position is in the X array; once it isn't, then it's found a solution
-        let k = x[posX] + 1;
+        const possibleK = altGraph[x[posX-1]];
+        //let k = x[posX] + 1;
 
-        while (true) {
-            // if the suggested value (k) is already in the X array, move on to the next k.
-            // OR if the suggested value (k) is not adjacent to the previous item in the X array, move on to the next k.
-            if (graph[ x[posX-1] ][k] === 0 || x.includes(k)) { 
-                k++;
+        let kIndex = 0;
+        while (kIndex < possibleK.length) {
+            if (x.includes(possibleK[kIndex])) {
+                kIndex++;
             } else {
                 break;
             }
         }
+        let k = possibleK[kIndex];
+        console.log(posX);
+        // while (true) {
+        //     // if the suggested value (k) is already in the X array, move on to the next k.
+        //     // OR if the suggested value (k) is not adjacent to the previous item in the X array, move on to the next k.
+        //     if (graph[ x[posX-1] ][k] === 0 || x.includes(k)) { 
+        //         k++;
+        //     } else {
+        //         break;
+        //     }
+        // }
         
-        if (k >= x.length) { // checks if it should backtrack
+        if (kIndex >= possibleK.length) {
+        //if (k >= x.length) { // checks if it should backtrack
             x[posX] = -1; //reset back to -1
             posX--; //move back one space in the X array
             // check for backtracking all the way to the beginning of the X array
