@@ -40,44 +40,53 @@ function solveBoard(board, width, height) {
     x[0] = startIndex;
     let posX = 1;
 
-    while (posX < x.length) { // loop while the current position is in the X array; once it isn't, then it's found a solution
-        const possibleK = altGraph[x[posX-1]];
-        //let k = x[posX] + 1;
+    // loop while the current position is in the X array; once it isn't, then it's found a solution
+    while (posX < x.length) { 
+        // set the possible k to be the nodes that can be reached from the previous node in X
+        const possibleK = altGraph[x[posX-1]]; 
+        let kFound = false;
 
-        let kIndex = 0;
-        while (kIndex < possibleK.length) {
-            if (x.includes(possibleK[kIndex])) {
-                kIndex++;
+        let i;
+        if (x[posX] === -1) {
+            // we've never been here before, sort of, recently?
+            i = 0;
+        } else {
+            // we're backtracking into this spot in array X, so set i to the next index of the next item
+            const suggestedI = possibleK.indexOf(x[posX]) + 1;
+            if (suggestedI >= possibleK.length) {
+                // the suggestedI is larger than the size of possibleK: we've exhausted possibleK, so we need to backtrack again
+                console.log('BACKTRACKING');
+                x[posX] = -1; // reset spot we're on to -1
+                posX --;
+                continue; // go back to the start of the big while loop
+            }
+            
+            i = possibleK.indexOf(x[posX]) + 1;
+        }
+
+        console.log(possibleK);
+        console.log(i);
+        while (i < possibleK.length) {
+            // if the current possible K is alread in the X array,
+            if (x.includes(possibleK[i])) {
+                i++; // try the next I
+                continue;
             } else {
+                // we've found a k that: 1) connects to the previous node and 2) isn't already in the X array
+                kFound = true;
                 break;
             }
         }
-        let k = possibleK[kIndex];
-        console.log(posX);
-        // while (true) {
-        //     // if the suggested value (k) is already in the X array, move on to the next k.
-        //     // OR if the suggested value (k) is not adjacent to the previous item in the X array, move on to the next k.
-        //     if (graph[ x[posX-1] ][k] === 0 || x.includes(k)) { 
-        //         k++;
-        //     } else {
-        //         break;
-        //     }
-        // }
-        
-        if (kIndex >= possibleK.length) {
-        //if (k >= x.length) { // checks if it should backtrack
-            x[posX] = -1; //reset back to -1
-            posX--; //move back one space in the X array
-            // check for backtracking all the way to the beginning of the X array
-            if (posX < 1) {
-                console.log("Failed to solve in " + elapsedTime() + " ms");
-                return {status: 'fail', time: elapsedTime(), solution: null};
-            }
-        } else {
-            x[posX] = k;
+
+        if (kFound) {
             posX ++;
-            // if (posX > x.length) break;
+        } else {
+            // if we've not found a suitable k, then we have to backtrack
+            console.log('BACKTRACKING');
+            x[posX] = -1; // reset spot we're on to -1
+            posX --;
         }
+
     }
 
     console.log("Solved in " + elapsedTime() + " ms");
