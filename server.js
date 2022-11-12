@@ -43,7 +43,7 @@ function solveBoard(board, width, height) {
     // loop while the current position is in the X array; once it isn't, then it's found a solution
     while (posX < x.length) { 
         // set the possible k to be the nodes that can be reached from the previous node in X
-        const possibleK = altGraph[x[posX-1]]; 
+        const possibleK = altGraph[x[posX-1]];
         let kFound = false;
 
         let i;
@@ -55,17 +55,19 @@ function solveBoard(board, width, height) {
             const suggestedI = possibleK.indexOf(x[posX]) + 1;
             if (suggestedI >= possibleK.length) {
                 // the suggestedI is larger than the size of possibleK: we've exhausted possibleK, so we need to backtrack again
-                console.log('BACKTRACKING');
                 x[posX] = -1; // reset spot we're on to -1
                 posX --;
-                continue; // go back to the start of the big while loop
+                if (posX === 0) {
+                    // we're back at the beginning of the X array, therefore there is no solution
+                    return {status: 'fail', time: elapsedTime(), solution: null};
+                } else {
+                    continue; // go back to the start of the big while loop
+                }
             }
             
             i = possibleK.indexOf(x[posX]) + 1;
         }
 
-        console.log(possibleK);
-        console.log(i);
         while (i < possibleK.length) {
             // if the current possible K is alread in the X array,
             if (x.includes(possibleK[i])) {
@@ -79,12 +81,17 @@ function solveBoard(board, width, height) {
         }
 
         if (kFound) {
+            x[posX] = possibleK[i]; // set the spot we're on to to the chosen K
             posX ++;
         } else {
             // if we've not found a suitable k, then we have to backtrack
-            console.log('BACKTRACKING');
             x[posX] = -1; // reset spot we're on to -1
             posX --;
+            
+            if (posX === 0) {
+                // we're back at the beginning of the X array, therefore there is no solution
+                return {status: 'fail', time: elapsedTime(), solution: null};
+            }
         }
 
     }
