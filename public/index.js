@@ -157,9 +157,11 @@ async function sendData() {
       body: JSON.stringify(data)
   };
 
+  console.log(getTimeFormattedHMS() + ": Request POSTed to server");
   const response = await fetch('/api', options);
   const responseData = await response.json();
 
+  console.log(getTimeFormattedHMS() + ": Response received with status " + responseData.status);
   console.log(responseData);
   if (responseData.status === "success") {
     solution = responseData.solution;

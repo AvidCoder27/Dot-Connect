@@ -5,6 +5,15 @@ const EMPTY_COLOR = "#c8c8c8";
 
 const CELL_SIZE = 60;
 
+function getTimeFormattedHMS() {
+  const today = new Date();
+  return (
+    today.getHours().toString().padStart(2, '0') + ":" + 
+    today.getMinutes().toString().padStart(2, '0') + ":" + 
+    today.getSeconds().toString().padStart(2, '0')
+  );
+}
+
 setCellValue = (xyPair, value) => board[xyPair.y][xyPair.x] = value;
 getCellValue = (xyPair) => board[xyPair.y][xyPair.x];
 
