@@ -23,6 +23,9 @@ function solveBoard(board, width, height) {
     let elapsedTime = () => Date.now() - START_TIME;
     
     const graphAndStartIndex = graphFromGrid(board, width, height);
+    if (graphAndStartIndex === "MISSING START") {
+        return {status: 'missing start', time: elapsedTime(), solution: null};
+    }
     const graph = graphAndStartIndex.nodes;
     const startIndex = graphAndStartIndex.startIndex;
 
@@ -118,6 +121,10 @@ function graphFromGrid(g, width, height){
                 numberOfNodes ++;
             }
         }
+    }
+
+    if (startIndex === undefined) {
+        return "MISSING START";
     }
 
     for (let y = 0; y < height; y++) {
