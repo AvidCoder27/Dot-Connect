@@ -46,3 +46,10 @@ function screenSpace(n){
 function inverseScreenSpace(n) {
   return Math.round((n / CELL_SIZE) - 0.5);
 }
+
+class LevelValidationError extends Error {
+  constructor(message){
+    super(message);
+    this.name = "LevelValidationError";
+  }
+}
