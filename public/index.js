@@ -148,7 +148,7 @@ function stopExecution() {
 }
 
 async function sendData() {
-  const data = {message: "SOLVE THIS", board: originalBoard, width: boardWidth, height: boardHeight}; 
+  const data = {message: "SOLVE BOARD " + selectedLevel, board: originalBoard, width: boardWidth, height: boardHeight}; 
   const options = {
       method: "POST",
       headers: {
