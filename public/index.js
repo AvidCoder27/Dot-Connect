@@ -4,6 +4,7 @@ const EXECUTE_BUTTON = document.getElementById("execute");
 const STOP_BUTTON = document.getElementById("stop_execute");
 const SPEED_SLIDER = document.getElementById("move_speed");
 const LEVEL_SELECTOR = document.getElementById("level");
+const CUSTOM_LEVEL_TEXTAREA = document.getElementById("text_custom");
 
 let BOARDS;
 let originalBoard;
@@ -166,8 +167,10 @@ async function sendData() {
   if (responseData.status === "success") {
     solution = responseData.solution;
     setServerDomState(true);
-  } else {
+  } else if (responseData.status === "fail") {
     alert("There's no solution for this board!");
+  } else if (responseData.status === "missing start") {
+    alert("The board sent contained no starting cell!");
   }
 }
 
@@ -183,7 +186,73 @@ function restartButton(){
 }
 
 function resetBoards() {
-  p = BOARDS[selectedLevel];
+  if (selectedLevel === 'CUSTOM') {
+    try {
+      let parsedCustomLevel = JSON.parse(CUSTOM_LEVEL_TEXTAREA.value);
+      const parsedBoard = parsedCustomLevel.board;
+
+      if (parsedBoard.length !== parsedCustomLevel.height){
+        throw new LevelValidationError("Number of rows does not match height, or board is not an array.");
+      }
+
+      // loop through all the rows
+      for (let y = 0; y < parsedBoard.length; y++) {
+        
+        if (parsedBoard[y].length !== parsedCustomLevel.width) {
+          throw new LevelValidationError(`Number of columns in row ${y} does not match width, or row ${y} is not an array.`);
+        }
+        // loop through all the items in this row and check for invalids
+        for (let x = 0; x < parsedBoard[y].length; x++) {
+          if (typeof parsedBoard[y][x] !== "number" || (parsedBoard[y][x] !== 0 && parsedBoard[y][x] !== 1 && parsedBoard[y][x] !== 8)) {
+            console.log(parsedBoard[y][x]);
+            throw new LevelValidationError(`Cell (${x}, ${y}) contains contains an invalid element.`);
+          }
+        }
+      }
+      if (parsedCustomLevel.start === undefined) {
+        throw new LevelValidationError("No start cell is provided.");
+      } else {
+        // this part only runs if start is defined so as not to throw an unwanted error
+        if (parsedCustomLevel.start.x === undefined || typeof parsedCustomLevel.start.x !== "number")
+          throw new LevelValidationError("Start cell is missing X coordinate.");
+        if (parsedCustomLevel.start.y === undefined || typeof parsedCustomLevel.start.y !== "number")
+          throw new LevelValidationError("Start cell is missing Y coordinate.");
+      }
+      if (
+        parsedCustomLevel.start.x < 0 ||
+        parsedCustomLevel.start.y < 0 ||
+        parsedCustomLevel.start.x >= parsedCustomLevel.width ||
+        parsedCustomLevel.start.y >= parsedCustomLevel.height
+      ){
+        throw new LevelValidationError("Start cell is out of bounds.");
+      }
+
+      let isEigthPresent = false;
+      for (let y = 0; y < parsedBoard.height; y++) {
+        for (let x = 0; x < parsedBoard.width; x++) {
+          if (parsedBoard[y][x] === 8){
+            isEigthPresent = true;
+            break;
+          }
+        }
+        if (isEigthPresent) break;
+      }
+      if (!isEigthPresent) {
+        // if it's missing an 8, just put one in at the start position
+        parsedCustomLevel.board[parsedCustomLevel.start.y][parsedCustomLevel.start.x] = 8;
+      }
+    
+      // if there are no errors, then it's safe to set p
+      p = parsedCustomLevel;
+
+    } catch(err) {
+      console.log(err.name + ": " + err.message);
+      alert("The custom level entered is invalid!\n " + err.message);
+      return;
+    }
+  } else {
+    p = BOARDS[selectedLevel];
+  }
   originalBoard = p.board
 
   boardWidth = p.width;
