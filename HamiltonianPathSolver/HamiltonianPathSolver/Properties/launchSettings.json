@@ -2,7 +2,7 @@
   "profiles": {
     "HamiltonianPathSolver": {
       "commandName": "Project",
-      "commandLineArgs": "./board.txt",
+      "commandLineArgs": "./_Boards/board10.txt",
       "workingDirectory": "C:\\Users\\Gili\\Documents\\Dot Connect\\HamiltonianPathSolver\\HamiltonianPathSolver"
     }
   }

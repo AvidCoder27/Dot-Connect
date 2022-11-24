@@ -4,24 +4,68 @@ namespace HamiltonianPathSolver
 {
     public class Board
     {
-        public List<List<int>> board;
+        public List<List<int>> board; // a list of lists of #s representing cell types (0,1,8)
         public StartCoordinate start;
         public int width;
         public int height;
 
         private int startIndex;
         private int numberOfNodes;
-        private List<List<int>> graph;
-        private List<int> xList;
+        private readonly List<List<int>> graph; // a list of lists of #s representing node indices
         private Solution solution;
+        
+        public static char[] GetPrioritizationFromIndex(int index)
+        {
+            switch (index)
+            {
+                default: return new char[] { 'N', 'S', 'E', 'W' };
+                case 00: return new char[] { 'N', 'S', 'E', 'W' };
+                case 01: return new char[] { 'N', 'S', 'W', 'E' };
+                case 02: return new char[] { 'N', 'E', 'S', 'W' };
+                case 03: return new char[] { 'N', 'E', 'W', 'S' };
+                case 04: return new char[] { 'N', 'W', 'S', 'E' };
+                case 05: return new char[] { 'N', 'W', 'E', 'S' };
+                case 06: return new char[] { 'S', 'N', 'E', 'W' };
+                case 07: return new char[] { 'S', 'N', 'W', 'E' };
+                case 08: return new char[] { 'S', 'E', 'N', 'W' };
+                case 09: return new char[] { 'S', 'E', 'W', 'N' };
+                case 10: return new char[] { 'S', 'W', 'N', 'E' };
+                case 11: return new char[] { 'S', 'W', 'E', 'N' };
+                case 12: return new char[] { 'E', 'N', 'S', 'W' };
+                case 13: return new char[] { 'E', 'N', 'W', 'S' };
+                case 14: return new char[] { 'E', 'S', 'N', 'W' };
+                case 15: return new char[] { 'E', 'S', 'W', 'N' };
+                case 16: return new char[] { 'E', 'W', 'N', 'S' };
+                case 17: return new char[] { 'E', 'W', 'S', 'N' };
+                case 18: return new char[] { 'W', 'N', 'S', 'E' };
+                case 19: return new char[] { 'W', 'N', 'E', 'S' };
+                case 20: return new char[] { 'W', 'S', 'N', 'E' };
+                case 21: return new char[] { 'W', 'S', 'E', 'N' };
+                case 22: return new char[] { 'W', 'E', 'N', 'S' };
+                case 23: return new char[] { 'W', 'E', 'S', 'N' };
+            }
+        }
 
         public Board()
         {
             board = new List<List<int>>();
             graph = new List<List<int>>();
             start = new StartCoordinate(-1, -1);
-            xList = new List<int>();
-            solution = new Solution(new List<int>(), Solution.Status.Unsolved);
+            solution = new Solution();
+        }
+        public Board(List<List<int>> board, StartCoordinate start, int width, int height)
+        {
+            this.board = board;
+            this.start = start;
+            this.width = width;
+            this.height = height;
+            graph = new List<List<int>>();
+            solution = new Solution();
+        }
+
+        public Board GetCopy()
+        {
+            return new Board(board, start, width, height);
         }
 
         public bool IsValid()
@@ -29,7 +73,6 @@ namespace HamiltonianPathSolver
             if (board.Count != height) return false;
             foreach(List<int> row in board) if (row.Count != width) return false;
             if (start.x < 0 || start.y < 0 || start.x >= width || start.y >= height) return false;
-
             return true;
         }
 
@@ -51,17 +94,18 @@ namespace HamiltonianPathSolver
             return output;
         }
 
-        public Solution Solve()
+        public Solution Solve(int prioritizationIndex)
         {
             if (solution.status == Solution.Status.Unsolved)
             {
                 Stopwatch stopwatch = new Stopwatch();
 
                 stopwatch.Start();
+                SetGraphFromBoard(GetPrioritizationFromIndex(prioritizationIndex));
                 solution = PrivateSolve();
                 stopwatch.Stop();
 
-                solution.executionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+                solution.executionTimeMilliseconds = (uint) stopwatch.ElapsedMilliseconds;
             }
 
             return solution;
@@ -71,10 +115,9 @@ namespace HamiltonianPathSolver
         {
             Stopwatch secondaryStopwatch = new Stopwatch();
 
-            SetGraphFromBoard();
-
             // Create xList with startIndex as first element
-            xList = new List<int>() { startIndex };
+            // xList is a list of #s representing node indecies
+            List<int> xList = new List<int>() { startIndex };
             // NOTE: puts in 1 less than the # of nodes b/c the first node is already added
             for (int i = 1; i < numberOfNodes; i++) xList.Add(-1);
             int posX = 1;
@@ -88,7 +131,7 @@ namespace HamiltonianPathSolver
                 // And that would take valuable processing time
                 List<int> possibleK = graph[xList[posX - 1]];
                 bool kFound = false;
-
+                
                 int i;
                 if (xList[posX] == -1) // we've never been here before, sort of, recently?
                     i = 0;
@@ -147,12 +190,15 @@ namespace HamiltonianPathSolver
             return new Solution(xList, Solution.Status.Success);
         }
 
-        private bool SetGraphFromBoard()
+        private bool SetGraphFromBoard(char[] directionPrioritization)
         {
             startIndex = -1;
             numberOfNodes = 0;
             // Grid is a 2d list that keeps track of the node # of each cell. -1 means the cell is a wall
-            List<List<int>> grid = new List<List<int>>(board);
+            List<List<int>> grid = new List<List<int>>();
+            // Deep copy board into grid by looping thru all rows and cloning the List<int>'s
+            for (int i = 0; i < height; i++)
+                grid.Add(new List<int>( board[i] ));
 
             // Fill up graph with a list for each non-wall/ node
             for (int y = 0; y < height; y++)
@@ -166,7 +212,7 @@ namespace HamiltonianPathSolver
 
                         grid[y][x] = numberOfNodes;
                         graph.Add(new List<int>());
-                        numberOfNodes++;
+                        numberOfNodes++;    
                     }
                 }
             }
@@ -174,30 +220,34 @@ namespace HamiltonianPathSolver
             if (startIndex == -1) return false; // Missing a start
 
             // For each node in graph: fill its list with the node #s of the adjacent nodes
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < height; y++) 
             {
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < width; x++) 
                 {
-                    if (grid[y][x] != -1) //if not a wall
+                    if (grid[y][x] != -1) 
                     {
+                        //if not a wall
                         // Checks spot above, below, right, and left to see if it's a valid node
                         // If it is, it puts it's node # into the current node's list in graph
-                        
-                        if (IsNode(grid, x +0, y -1)) // Above
-                            graph[grid[y][x]].Add(grid[y -1][x +0]);
-
-                        if (IsNode(grid, x +0, y +1)) // Below
-                            graph[grid[y][x]].Add(grid[y +1][x +0]);
-
-                        if (IsNode(grid, x +1, y +0)) // Right
-                            graph[grid[y][x]].Add(grid[y +0][x +1]);
-
-                        if (IsNode(grid, x -1, y +0)) // Right
-                            graph[grid[y][x]].Add(grid[y +0][x -1]);
+                        foreach (char c in directionPrioritization) {
+                            switch (c) {
+                                case 'N':
+                                    if (IsNode(grid, x, y - 1)) graph[grid[y][x]].Add(grid[y - 1][x + 0]);
+                                    break;
+                                case 'S':
+                                    if (IsNode(grid, x, y + 1)) graph[grid[y][x]].Add(grid[y + 1][x + 0]);
+                                    break;
+                                case 'E':
+                                    if (IsNode(grid, x + 1, y)) graph[grid[y][x]].Add(grid[y + 0][x + 1]);
+                                    break;
+                                case 'W':
+                                    if (IsNode(grid, x - 1, y)) graph[grid[y][x]].Add(grid[y + 0][x - 1]);
+                                    break;
+                            }
+                        }
                     }
                 }
             }
-            
             return true;
         }
 

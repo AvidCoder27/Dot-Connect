@@ -2,9 +2,10 @@
 {
     public class Solution
     {
-        public List<int> steps { get; private set; }
-        public Status status { get; private set; }
-        public long executionTimeMilliseconds { get; set; }
+        private string stepsAsString;
+        public List<int> steps;
+        public Status status;
+        public uint executionTimeMilliseconds;
         public enum Status
         {
             Success,
@@ -12,10 +13,17 @@
             Unsolved
         }
 
+        public Solution()
+        {
+            steps = new List<int>();
+            status = Status.Unsolved;
+            stepsAsString = string.Empty;
+        }
         public Solution(List<int> steps, Status status)
         {
             this.steps = steps;
             this.status = status;
+            stepsAsString = string.Join(" > ", steps.ToArray());
         }
 
         public override string ToString()
@@ -23,9 +31,9 @@
             switch (status)
             {
                 case Status.Success:
-                    return "Solution Found in " + executionTimeMilliseconds + " ms:\n" + String.Join(" > ", steps.ToArray());
+                    return "Solution in " + executionTimeMilliseconds + " ms:\n" + stepsAsString;
                 case Status.NoSolution:
-                    return "No Solution Found in " + executionTimeMilliseconds + " ms:\n";
+                    return "No Solution in " + executionTimeMilliseconds + " ms:\n";
                 case Status.Unsolved:
                     return "Board has not been solved! Run the Board.Solve() method to solve it.";
                 default:
