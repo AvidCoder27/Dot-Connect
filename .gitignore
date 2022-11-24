@@ -2,6 +2,7 @@ node_modules/
 _ignored/
 HamiltonianPathSolver/.vs/
 HamiltonianPathSolver/HamiltonianPathSolver/bin/
+HamiltonianPathSolver/HamiltonianPathSolver/obj/
 *.suo
 *.vsidx
 *.v2
