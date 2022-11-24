@@ -29,6 +29,12 @@ table, th, td {
   padding: 5px;
 }
 
+.hidden-table {
+  border: 0px;
+  vertical-align: top;
+  padding: 0px;
+}
+
 .controls-key {
   font-family: 'Courier New', Courier, monospace;
   font-size: 28px;

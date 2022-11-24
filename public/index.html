@@ -11,73 +11,83 @@
     <script src="libraries/p5.sound.min.js"></script>
   </head>
   <body>
-    <div id="game">
-      <table>
-        <tr>
-          <td>
-            <label for="level">Choose Level: </label>
-            <select id="level">
-              <option value="0">0 Beginner 1 ms</option>
-
-              <option value="1">1 Easy 65 ms</option>
-              <option value="2">2 Easy 1 ms</option>
-
-              <option value="3">3 Medium 235 ms</option>
-              <option value="6">6 Medium 400 ms</option>
-
-              <option value="10">10 Hard unknown</option>
-              <option value="11">11 Hard 424,249 ms</option>
-              <option value="12">12 Hard 20 ms</option>
-              <option value="13">13 Hard 42,481 ms</option>
-              <option value="20">20 Impossible 1ms</option>
-              <option value="CUSTOM">Custom Level</option>
-            </select>
-          </td>
-          <td>
-            <button id="new_game" name="new_game" onclick="newgameButton()">New Game</button>
-          </td>
-          <td>
-            <button id="restart" name="restart" onclick="restartButton()">Restart</button>
-          </td>
-          <td>
-            <a href="./editor.html" target="_blank">Level Creator</a>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <hr>
-    <div id="solver">
-      <table>
-        <tr>
-          <td>
-            <button id="send" name="send" onclick="sendData()">Send the level to the server to be solved</button>
-          </td>
-          <td>
-            <button id="execute" name="execute" onclick="executeSolution()" disabled>Execute the solution on the board</button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label for="move_speed">Move speed</label>
-            <input class="slider gradient-slider" name="move_speed" id="move_speed" type="range" min="400" max="1000" value="700">
-          </td>
-          <td>
-            <button id="stop_execute" name="stop_execute" onclick="stopExecution()" disabled>Stop execution</button>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2">
-            <p id="text_output_p">Press the solve button above to get the solution.</p>
-            <textarea id="text_output" cols="50" rows="8" disabled></textarea>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <hr>
-    <div id="custom_level">
-      <p>Choose Custom Level, paste the text generated from the<a href="./editor.html" target="_blank">Level Creator</a>into the box below, and press New Game.</p>
-      <textarea name="text_custom" id="text_custom" cols="55" rows="5"></textarea>
-    </div>
+    <table class="hidden-table">
+      <tr class="hidden-table">
+        <td class="hidden-table">
+          <div id="game">
+            <table>
+              <tr>
+                <td>
+                  <label for="level">Choose Level: </label>
+                  <select id="level">
+                    <option value="0">0 Beginner 1 ms</option>
+      
+                    <option value="1">1 Easy 65 ms</option>
+                    <option value="2">2 Easy 1 ms</option>
+      
+                    <option value="3">3 Medium 235 ms</option>
+                    <option value="6">6 Medium 400 ms</option>
+      
+                    <option value="10">10 Hard unknown</option>
+                    <option value="11">11 Hard 424,249 ms</option>
+                    <option value="12">12 Hard 20 ms</option>
+                    <option value="13">13 Hard 42,481 ms</option>
+                    <option value="20">20 Impossible 1ms</option>
+                    <option value="CUSTOM">Custom Level</option>
+                  </select>
+                </td>
+                <td>
+                  <button id="new_game" name="new_game" onclick="newgameButton()">New Game</button>
+                </td>
+                <td>
+                  <button id="restart" name="restart" onclick="restartButton()">Restart</button>
+                </td>
+                <td>
+                  <a href="./editor.html" target="_blank">Level Creator</a>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </td>
+        <td class="hidden-table">
+          <div>
+            <table>
+              <tr>
+                <td>
+                  <button id="send" name="send" onclick="sendData()">Send the level to the server to be solved</button>
+                </td>
+                <td>
+                  <button id="execute" name="execute" onclick="executeSolution()" disabled>Execute the solution on the board</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <label for="move_speed">Move speed</label>
+                  <input class="slider gradient-slider" name="move_speed" id="move_speed" type="range" min="400" max="1000" value="700">
+                </td>
+                <td>
+                  <button id="stop_execute" name="stop_execute" onclick="stopExecution()" disabled>Stop execution</button>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <p id="text_output_p">Press the solve button above to get the solution.</p>
+                  <textarea id="text_output" cols="60" rows="8" disabled></textarea>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <p>Choose Custom Level, paste the text generated from the<a href="./editor.html" target="_blank">Level Creator</a>into the<br>box below, and press New Game.</p>
+                  <textarea name="text_custom" id="text_custom" cols="60" rows="7"></textarea>
+                </td>
+              </tr>
+            </table>
+          </div>
+          
+        </td>
+      </tr>
+    </table>
+    
     <script src="index.js"></script>
     <script src="utils.js"></script>
   </body>
