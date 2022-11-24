@@ -8,7 +8,8 @@
         public enum Status
         {
             Success,
-            NoSolution
+            NoSolution,
+            Unsolved
         }
 
         public Solution(List<int> steps, Status status)
@@ -25,6 +26,8 @@
                     return "Solution Found in " + executionTimeMilliseconds + " ms:\n" + String.Join(" > ", steps.ToArray());
                 case Status.NoSolution:
                     return "No Solution Found in " + executionTimeMilliseconds + " ms:\n";
+                case Status.Unsolved:
+                    return "Board has not been solved! Run the Board.Solve() method to solve it.";
                 default:
                     return "MISSING_STATUS\n";
             }

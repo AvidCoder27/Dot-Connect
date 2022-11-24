@@ -14,9 +14,9 @@
             string path = args[0];
             string content = File.ReadAllText(path);
             board = Newtonsoft.Json.JsonConvert.DeserializeObject<Board>(content);
-            Console.WriteLine(board);
+            if (board == null || !board.IsValid()) return -1;
 
-            if (board == null || board.startIndex == -1) return -1;
+            Console.WriteLine(board);
             Solution solution = board.Solve();
             Console.WriteLine(solution);
 

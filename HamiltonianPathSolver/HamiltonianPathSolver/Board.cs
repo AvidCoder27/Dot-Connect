@@ -4,21 +4,33 @@ namespace HamiltonianPathSolver
 {
     public class Board
     {
-        public List<List<int>> board { get; set; }
-        public _start start { get; set; }
-        public int width { get; set; }
-        public int height { get; set; }
-        public int startIndex { get; private set; }
-        public int numberOfNodes { get; private set; }
-        public List<List<int>> graph { get; private set; }
-        public List<int> xList { get; private set; }
+        public List<List<int>> board;
+        public StartCoordinate start;
+        public int width;
+        public int height;
+
+        private int startIndex;
+        private int numberOfNodes;
+        private List<List<int>> graph;
+        private List<int> xList;
+        private Solution solution;
 
         public Board()
         {
             board = new List<List<int>>();
             graph = new List<List<int>>();
+            start = new StartCoordinate(-1, -1);
             xList = new List<int>();
-            start = new _start();
+            solution = new Solution(new List<int>(), Solution.Status.Unsolved);
+        }
+
+        public bool IsValid()
+        {
+            if (board.Count != height) return false;
+            foreach(List<int> row in board) if (row.Count != width) return false;
+            if (start.x < 0 || start.y < 0 || start.x >= width || start.y >= height) return false;
+
+            return true;
         }
 
         public override string ToString()
@@ -41,13 +53,17 @@ namespace HamiltonianPathSolver
 
         public Solution Solve()
         {
-            Stopwatch stopwatch = new Stopwatch();
+            if (solution.status == Solution.Status.Unsolved)
+            {
+                Stopwatch stopwatch = new Stopwatch();
 
-            stopwatch.Start();
-            Solution solution = PrivateSolve();
-            stopwatch.Stop();
+                stopwatch.Start();
+                solution = PrivateSolve();
+                stopwatch.Stop();
 
-            solution.executionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+                solution.executionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            }
+
             return solution;
         }
 
@@ -127,7 +143,7 @@ namespace HamiltonianPathSolver
                     }
                 }
             }
-            Console.WriteLine("Time on custom thing: " + secondaryStopwatch.ElapsedMilliseconds);
+            //Console.WriteLine("Time on custom thing: " + secondaryStopwatch.ElapsedMilliseconds);
             return new Solution(xList, Solution.Status.Success);
         }
 
@@ -192,11 +208,17 @@ namespace HamiltonianPathSolver
         }
     }
 
-    public class _start
+    public class StartCoordinate
     {
         // This class is just for storing the XY pair for the start
         public int x { get; set; }
         public int y { get; set; }
+
+        public StartCoordinate(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
 
         public override string ToString()
         {
