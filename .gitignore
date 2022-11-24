@@ -1,10 +1,5 @@
-node_modules/
 _ignored/
-HamiltonianPathSolver/.vs/
-HamiltonianPathSolver/HamiltonianPathSolver/bin/
-HamiltonianPathSolver/HamiltonianPathSolver/obj/
-*.suo
-*.vsidx
-*.v2
-*.dll
-*.pdb
+node_modules/
+bin/
+obj/
+.vs/
