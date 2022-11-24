@@ -1,4 +1,9 @@
-
+node_modules/
 _ignored/
-.suo
 HamiltonianPathSolver/.vs/
+HamiltonianPathSolver/HamiltonianPathSolver/bin/
+*.suo
+*.vsidx
+*.v2
+*.dll
+*.pdb
