@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "HamiltonianPathSolver": {
+      "commandName": "Project",
+      "commandLineArgs": "./board.txt",
+      "workingDirectory": "C:\\Users\\Gili\\Documents\\Dot Connect\\HamiltonianPathSolver\\HamiltonianPathSolver"
+    }
+  }
+}

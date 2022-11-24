@@ -53,10 +53,13 @@ namespace HamiltonianPathSolver
 
         private Solution PrivateSolve()
         {
+            Stopwatch secondaryStopwatch = new Stopwatch();
+
             SetGraphFromBoard();
 
-            xList = new List<int>();
-            xList.Add(startIndex);
+            // Create xList with startIndex as first element
+            xList = new List<int>() { startIndex };
+            // NOTE: puts in 1 less than the # of nodes b/c the first node is already added
             for (int i = 1; i < numberOfNodes; i++) xList.Add(-1);
             int posX = 1;
 
@@ -76,22 +79,20 @@ namespace HamiltonianPathSolver
                 else
                 {
                     // we're backtracking into this spot in X list, so set i to the next index of the next item
-                    int suggestedI = possibleK.IndexOf(xList[posX]) + 1;
-                    if (suggestedI >= possibleK.Count)
+                    i = possibleK.IndexOf(xList[posX]) + 1;
+                    if (i >= possibleK.Count)
                     {
-                        // the suggestedI is larger than the size of possibleK:
+                        // the suggested I is larger than the size of possibleK:
                         // we've exhausted possibleK, so we need to backtrack again
                         xList[posX] = -1; // reset spot we're on to -1
                         posX--;
                         if (posX == 0)
                         {
-                            // we're back at the beginning of the Sol list, therefore there is no solution
-                            Console.WriteLine("first backtrack");
+                            // we're back at the beginning of the X list, therefore there is no solution
                             return new Solution(xList, Solution.Status.NoSolution);
                         }
                         else continue; // go back to the start of the big while loop
                     }
-                    i = possibleK.IndexOf(xList[posX]) + 1;
                 }
 
                 while (i < possibleK.Count)
@@ -122,12 +123,11 @@ namespace HamiltonianPathSolver
                     if (posX == 0)
                     {
                         // we're back at the beginning of the X list, therefore there is no solution
-                        Console.WriteLine("second backtrack");
                         return new Solution(xList, Solution.Status.NoSolution);
                     }
                 }
             }
-
+            Console.WriteLine("Time on custom thing: " + secondaryStopwatch.ElapsedMilliseconds);
             return new Solution(xList, Solution.Status.Success);
         }
 
@@ -195,8 +195,8 @@ namespace HamiltonianPathSolver
     public class _start
     {
         // This class is just for storing the XY pair for the start
-        public int x { get; private set; }
-        public int y { get; private set; }
+        public int x { get; set; }
+        public int y { get; set; }
 
         public override string ToString()
         {

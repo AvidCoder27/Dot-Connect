@@ -6,10 +6,12 @@
 
         public static int Main(string[] args)
         {
-            Console.WriteLine("Starting solver...");
+            if (args == null || args.Length < 1) throw new Exception("No path specified in args!");
+
+            Console.WriteLine("Starting solver on file " + args[0]);
 
             // Create the board 
-            string path = @"C:\Users\Gili\Documents\C#\HamiltonianPathSolver\HamiltonianPathSolver\board.txt";
+            string path = args[0];
             string content = File.ReadAllText(path);
             board = Newtonsoft.Json.JsonConvert.DeserializeObject<Board>(content);
             Console.WriteLine(board);

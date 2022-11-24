@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Gili\\Documents\\C#\\HamiltonianPathSolver\\HamiltonianPathSolver\\HamiltonianPathSolver.csproj": {}
+    "C:\\Users\\Gili\\Documents\\Dot Connect\\HamiltonianPathSolver\\HamiltonianPathSolver\\HamiltonianPathSolver.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Gili\\Documents\\C#\\HamiltonianPathSolver\\HamiltonianPathSolver\\HamiltonianPathSolver.csproj": {
+    "C:\\Users\\Gili\\Documents\\Dot Connect\\HamiltonianPathSolver\\HamiltonianPathSolver\\HamiltonianPathSolver.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Gili\\Documents\\C#\\HamiltonianPathSolver\\HamiltonianPathSolver\\HamiltonianPathSolver.csproj",
+        "projectUniqueName": "C:\\Users\\Gili\\Documents\\Dot Connect\\HamiltonianPathSolver\\HamiltonianPathSolver\\HamiltonianPathSolver.csproj",
         "projectName": "HamiltonianPathSolver",
-        "projectPath": "C:\\Users\\Gili\\Documents\\C#\\HamiltonianPathSolver\\HamiltonianPathSolver\\HamiltonianPathSolver.csproj",
+        "projectPath": "C:\\Users\\Gili\\Documents\\Dot Connect\\HamiltonianPathSolver\\HamiltonianPathSolver\\HamiltonianPathSolver.csproj",
         "packagesPath": "C:\\Users\\Gili\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Gili\\Documents\\C#\\HamiltonianPathSolver\\HamiltonianPathSolver\\obj\\",
+        "outputPath": "C:\\Users\\Gili\\Documents\\Dot Connect\\HamiltonianPathSolver\\HamiltonianPathSolver\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

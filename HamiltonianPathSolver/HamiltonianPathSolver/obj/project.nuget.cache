@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Fz+M0x0igrsekkUGeBxMtDUTNFTdzWyQ/hKw/+WolRoCgBEyWZzsCZ9UMrNW5Rcmp9pQPBNgRvmVrfHw5Y5kgg==",
+  "dgSpecHash": "ASQ+awpogirweAld9mj1nbkq2sN7RQEDtfL6JlU1TBZG5ddsJJ+8IJ7mc0DPfYsnYfvl+i6ZspUGF76xdKRaVA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Gili\\Documents\\C#\\HamiltonianPathSolver\\HamiltonianPathSolver\\HamiltonianPathSolver.csproj",
+  "projectFilePath": "C:\\Users\\Gili\\Documents\\Dot Connect\\HamiltonianPathSolver\\HamiltonianPathSolver\\HamiltonianPathSolver.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Gili\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
   ],
