@@ -31,9 +31,9 @@
             switch (status)
             {
                 case Status.Success:
-                    return "Solution in " + executionTimeMilliseconds + " ms:\n" + stepsAsString;
+                    return "solution in " + executionTimeMilliseconds + " ms:\n" + stepsAsString;
                 case Status.NoSolution:
-                    return "No Solution in " + executionTimeMilliseconds + " ms:\n";
+                    return "NO solution in " + executionTimeMilliseconds + " ms:\n";
                 case Status.Unsolved:
                     return "Board has not been solved! Run the Board.Solve() method to solve it.";
                 default:
