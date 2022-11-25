@@ -2,7 +2,7 @@
 {
     public class Solution
     {
-        private string stepsAsString;
+        public string stepsAsString;
         public List<int> steps;
         public Status status;
         public uint executionTimeMilliseconds;
@@ -10,6 +10,7 @@
         {
             Success,
             NoSolution,
+            InvalidBoard,
             Unsolved
         }
 
