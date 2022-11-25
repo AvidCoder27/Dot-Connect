@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace HamiltonianPathSolver
+﻿namespace HamiltonianPathSolver
 {
     internal class HamiltonianPathSolver
     {
@@ -13,19 +10,45 @@ namespace HamiltonianPathSolver
             string path = args[0];
             string content = File.ReadAllText(path);
 
-            Console.WriteLine("Starting solver on file " + path);
+            Console.WriteLine("\nStarting solver on file " + path);
+
+            // create board
             originalBoard = Newtonsoft.Json.JsonConvert.DeserializeObject<Board>(content);
             if (originalBoard == null || !originalBoard.IsValid()) return -1;
             Console.WriteLine(originalBoard);
 
-            CancellationTokenSource cts = new CancellationTokenSource();
-            Parallel.For(6, 18, index =>
+            // setup parallel options
+            CancellationTokenSource cts = new();
+            ParallelOptions po = new()
             {
-                Thread thisThread = Thread.CurrentThread;
-                thisThread.Name = "Thread " + index;
-                Solution solution = originalBoard.GetCopy().Solve(index);
-                Console.WriteLine($"\n{thisThread.Name}: {solution}");
-            });
+                CancellationToken = cts.Token,
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            };
+
+            try
+            {
+                Parallel.For(0, 12, po, index =>
+                {
+                    Thread thisThread = Thread.CurrentThread;
+                    thisThread.Name = "t" + index;
+                    Console.Write($"{thisThread.Name}, ");
+
+                    Solution solution = originalBoard.GetCopy().Solve(index, po.CancellationToken);
+                    Console.WriteLine($"\n{thisThread.Name} found {solution}");
+
+                    cts.Cancel();
+                    Console.WriteLine("Cancelled token source. ");
+
+                });
+            }
+            catch (OperationCanceledException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                cts.Dispose();
+            }
 
             return 0;
         }
