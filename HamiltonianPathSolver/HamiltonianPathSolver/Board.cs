@@ -94,30 +94,31 @@ namespace HamiltonianPathSolver
             return output;
         }
 
-        public Solution Solve(int prioritizationIndex)
+        public Solution Solve() => Solve(0);
+        public Solution Solve(int prioritizationIndex) => Solve(prioritizationIndex, CancellationToken.None);
+        public Solution Solve(int prioritizationIndex, CancellationToken cancellationToken)
         {
             if (solution.status == Solution.Status.Unsolved)
             {
-                Stopwatch stopwatch = new Stopwatch();
+                Stopwatch stopwatch = new();
 
                 stopwatch.Start();
                 SetGraphFromBoard(GetPrioritizationFromIndex(prioritizationIndex));
-                solution = PrivateSolve();
+                solution = PrivateSolve(cancellationToken);
                 stopwatch.Stop();
-
                 solution.executionTimeMilliseconds = (uint) stopwatch.ElapsedMilliseconds;
             }
 
             return solution;
         }
 
-        private Solution PrivateSolve()
+        private Solution PrivateSolve(CancellationToken cancellationToken)
         {
-            Stopwatch secondaryStopwatch = new Stopwatch();
+            //Stopwatch secondaryStopwatch = new();
 
             // Create xList with startIndex as first element
             // xList is a list of #s representing node indecies
-            List<int> xList = new List<int>() { startIndex };
+            List<int> xList = new() { startIndex };
             // NOTE: puts in 1 less than the # of nodes b/c the first node is already added
             for (int i = 1; i < numberOfNodes; i++) xList.Add(-1);
             int posX = 1;
@@ -125,6 +126,9 @@ namespace HamiltonianPathSolver
             // loop while the current position is in the X list; once it isn't, then it's found a solution
             while (posX < xList.Count)
             {
+                // Check for cancellation token
+                cancellationToken.ThrowIfCancellationRequested();
+
                 // set the possible k to be the nodes that can be reached from the previous node in xList
                 // it's really a pointer to the graph, but it shouldn't be modified.
                 // It would be a const, but that would involve copying the the element in graph
@@ -195,7 +199,7 @@ namespace HamiltonianPathSolver
             startIndex = -1;
             numberOfNodes = 0;
             // Grid is a 2d list that keeps track of the node # of each cell. -1 means the cell is a wall
-            List<List<int>> grid = new List<List<int>>();
+            List<List<int>> grid = new();
             // Deep copy board into grid by looping thru all rows and cloning the List<int>'s
             for (int i = 0; i < height; i++)
                 grid.Add(new List<int>( board[i] ));
