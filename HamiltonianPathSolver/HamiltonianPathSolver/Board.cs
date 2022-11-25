@@ -18,31 +18,31 @@ namespace HamiltonianPathSolver
         {
             switch (index)
             {
-                default: return new char[] { 'N', 'S', 'E', 'W' };
-                case 00: return new char[] { 'N', 'S', 'E', 'W' };
-                case 01: return new char[] { 'N', 'S', 'W', 'E' };
-                case 02: return new char[] { 'N', 'E', 'S', 'W' };
-                case 03: return new char[] { 'N', 'E', 'W', 'S' };
-                case 04: return new char[] { 'N', 'W', 'S', 'E' };
-                case 05: return new char[] { 'N', 'W', 'E', 'S' };
-                case 06: return new char[] { 'S', 'N', 'E', 'W' };
-                case 07: return new char[] { 'S', 'N', 'W', 'E' };
-                case 08: return new char[] { 'S', 'E', 'N', 'W' };
-                case 09: return new char[] { 'S', 'E', 'W', 'N' };
-                case 10: return new char[] { 'S', 'W', 'N', 'E' };
-                case 11: return new char[] { 'S', 'W', 'E', 'N' };
-                case 12: return new char[] { 'E', 'N', 'S', 'W' };
-                case 13: return new char[] { 'E', 'N', 'W', 'S' };
-                case 14: return new char[] { 'E', 'S', 'N', 'W' };
-                case 15: return new char[] { 'E', 'S', 'W', 'N' };
-                case 16: return new char[] { 'E', 'W', 'N', 'S' };
-                case 17: return new char[] { 'E', 'W', 'S', 'N' };
-                case 18: return new char[] { 'W', 'N', 'S', 'E' };
-                case 19: return new char[] { 'W', 'N', 'E', 'S' };
-                case 20: return new char[] { 'W', 'S', 'N', 'E' };
-                case 21: return new char[] { 'W', 'S', 'E', 'N' };
-                case 22: return new char[] { 'W', 'E', 'N', 'S' };
-                case 23: return new char[] { 'W', 'E', 'S', 'N' };
+                default: return new char[] { 'N', 'E', 'S', 'W' };
+                case 00: return new char[] { 'N', 'E', 'S', 'W' };
+                case 01: return new char[] { 'E', 'N', 'S', 'W' };
+                case 02: return new char[] { 'N', 'S', 'E', 'W' };
+                case 03: return new char[] { 'S', 'N', 'E', 'W' };
+                case 04: return new char[] { 'E', 'S', 'N', 'W' };
+                case 05: return new char[] { 'S', 'E', 'N', 'W' };
+                case 06: return new char[] { 'N', 'E', 'W', 'S' };
+                case 07: return new char[] { 'E', 'N', 'W', 'S' };
+                case 08: return new char[] { 'N', 'W', 'E', 'S' };
+                case 09: return new char[] { 'W', 'N', 'E', 'S' };
+                case 10: return new char[] { 'E', 'W', 'N', 'S' };
+                case 11: return new char[] { 'W', 'E', 'N', 'S' };
+                case 12: return new char[] { 'N', 'S', 'W', 'E' };
+                case 13: return new char[] { 'S', 'N', 'W', 'E' };
+                case 14: return new char[] { 'N', 'W', 'S', 'E' };
+                case 15: return new char[] { 'W', 'N', 'S', 'E' };
+                case 16: return new char[] { 'S', 'W', 'N', 'E' };
+                case 17: return new char[] { 'W', 'S', 'N', 'E' };
+                case 18: return new char[] { 'E', 'S', 'W', 'N' };
+                case 19: return new char[] { 'S', 'E', 'W', 'N' };
+                case 20: return new char[] { 'E', 'W', 'S', 'N' };
+                case 21: return new char[] { 'W', 'E', 'S', 'N' };
+                case 22: return new char[] { 'S', 'W', 'E', 'N' };
+                case 23: return new char[] { 'W', 'S', 'E', 'N' };
             }
         }
 
