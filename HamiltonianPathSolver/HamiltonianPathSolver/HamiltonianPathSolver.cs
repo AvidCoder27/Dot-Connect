@@ -1,12 +1,19 @@
-﻿namespace HamiltonianPathSolver
+﻿using System.Net;
+
+namespace HamiltonianPathSolver
 {
     internal class HamiltonianPathSolver
     {
-        static Board? originalBoard;
-
         public static void Main(string[] args)
         {
-            if (args == null || args.Length < 1) throw new Exception("No path specified in args!");
+            SolveFromFile(args);
+        }
+
+        public static void SolveFromFile(string[] args)
+        {
+            if (args == null || args.Length == 0)
+                throw new ArgumentException("missing file path");
+
             string path = args[0];
             string content = File.ReadAllText(path);
 
@@ -17,7 +24,7 @@
             switch (solution.status)
             {
                 case Solution.Status.Success:
-                    Console.WriteLine(solution.stepsAsString);
+                    Console.WriteLine(solution.GetStepsAsString());
                     break;
                 case Solution.Status.NoSolution:
                     Console.WriteLine("Board has no solution");
@@ -34,6 +41,7 @@
 
         public static Solution SolveJsonString(string jsonString)
         {
+            Board? originalBoard;
             Solution finalSolution = new ();
 
             // create board

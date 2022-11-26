@@ -106,7 +106,7 @@ namespace HamiltonianPathSolver
                 SetGraphFromBoard(GetPrioritizationFromIndex(prioritizationIndex));
                 solution = PrivateSolve(cancellationToken);
                 stopwatch.Stop();
-                solution.executionTimeMilliseconds = (uint) stopwatch.ElapsedMilliseconds;
+                solution.SetExecutionTime((uint) stopwatch.ElapsedMilliseconds);
             }
 
             return solution;
