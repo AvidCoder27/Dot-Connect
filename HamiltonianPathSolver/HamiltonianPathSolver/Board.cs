@@ -16,34 +16,34 @@ namespace HamiltonianPathSolver
         
         public static char[] GetPrioritizationFromIndex(int index)
         {
-            switch (index)
+            return index switch
             {
-                default: return new char[] { 'N', 'E', 'S', 'W' };
-                case 00: return new char[] { 'N', 'E', 'S', 'W' };
-                case 01: return new char[] { 'E', 'N', 'S', 'W' };
-                case 02: return new char[] { 'N', 'S', 'E', 'W' };
-                case 03: return new char[] { 'S', 'N', 'E', 'W' };
-                case 04: return new char[] { 'E', 'S', 'N', 'W' };
-                case 05: return new char[] { 'S', 'E', 'N', 'W' };
-                case 06: return new char[] { 'N', 'E', 'W', 'S' };
-                case 07: return new char[] { 'E', 'N', 'W', 'S' };
-                case 08: return new char[] { 'N', 'W', 'E', 'S' };
-                case 09: return new char[] { 'W', 'N', 'E', 'S' };
-                case 10: return new char[] { 'E', 'W', 'N', 'S' };
-                case 11: return new char[] { 'W', 'E', 'N', 'S' };
-                case 12: return new char[] { 'N', 'S', 'W', 'E' };
-                case 13: return new char[] { 'S', 'N', 'W', 'E' };
-                case 14: return new char[] { 'N', 'W', 'S', 'E' };
-                case 15: return new char[] { 'W', 'N', 'S', 'E' };
-                case 16: return new char[] { 'S', 'W', 'N', 'E' };
-                case 17: return new char[] { 'W', 'S', 'N', 'E' };
-                case 18: return new char[] { 'E', 'S', 'W', 'N' };
-                case 19: return new char[] { 'S', 'E', 'W', 'N' };
-                case 20: return new char[] { 'E', 'W', 'S', 'N' };
-                case 21: return new char[] { 'W', 'E', 'S', 'N' };
-                case 22: return new char[] { 'S', 'W', 'E', 'N' };
-                case 23: return new char[] { 'W', 'S', 'E', 'N' };
-            }
+                00 => new char[] { 'N', 'E', 'S', 'W' },
+                01 => new char[] { 'E', 'N', 'S', 'W' },
+                02 => new char[] { 'N', 'S', 'E', 'W' },
+                03 => new char[] { 'S', 'N', 'E', 'W' },
+                04 => new char[] { 'E', 'S', 'N', 'W' },
+                05 => new char[] { 'S', 'E', 'N', 'W' },
+                06 => new char[] { 'N', 'E', 'W', 'S' },
+                07 => new char[] { 'E', 'N', 'W', 'S' },
+                08 => new char[] { 'N', 'W', 'E', 'S' },
+                09 => new char[] { 'W', 'N', 'E', 'S' },
+                10 => new char[] { 'E', 'W', 'N', 'S' },
+                11 => new char[] { 'W', 'E', 'N', 'S' },
+                12 => new char[] { 'N', 'S', 'W', 'E' },
+                13 => new char[] { 'S', 'N', 'W', 'E' },
+                14 => new char[] { 'N', 'W', 'S', 'E' },
+                15 => new char[] { 'W', 'N', 'S', 'E' },
+                16 => new char[] { 'S', 'W', 'N', 'E' },
+                17 => new char[] { 'W', 'S', 'N', 'E' },
+                18 => new char[] { 'E', 'S', 'W', 'N' },
+                19 => new char[] { 'S', 'E', 'W', 'N' },
+                20 => new char[] { 'E', 'W', 'S', 'N' },
+                21 => new char[] { 'W', 'E', 'S', 'N' },
+                22 => new char[] { 'S', 'W', 'E', 'N' },
+                23 => new char[] { 'W', 'S', 'E', 'N' },
+                _  => new char[] { 'N', 'E', 'S', 'W' },
+            };
         }
 
         public Board()
@@ -255,28 +255,14 @@ namespace HamiltonianPathSolver
             return true;
         }
 
-        private bool IsNode(List<List<int>> a, int x, int y)
+        private static bool IsNode(List<List<int>> a, int x, int y)
         {
             // False if out-of-bounds or cell is a wall
             return !(y >= a.Count || y < 0 || x >= a[0].Count || x < 0 || a[y][x] == -1);
         }
-    }
-
-    public class StartCoordinate
-    {
-        // This class is just for storing the XY pair for the start
-        public int x { get; set; }
-        public int y { get; set; }
-
-        public StartCoordinate(int x, int y)
+        private static bool IsNode(int[,] a, int x, int y)
         {
-            this.x = x;
-            this.y = y;
-        }
-
-        public override string ToString()
-        {
-            return string.Format("({0}, {1})", x, y);
+            return !(y >= a.GetLength(0) || y < 0 || x >= a.GetLength(1) || x < 0 || a[y, x] == -1);
         }
     }
 }
