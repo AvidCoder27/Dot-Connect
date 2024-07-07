@@ -62,6 +62,7 @@ function solveBoard(board, width, height) {
                 posX --;
                 if (posX === 0) {
                     // we're back at the beginning of the X array, therefore there is no solution
+                    console.log("Impossible to solve, took " + elapsedTime() + " ms");
                     return {status: 'fail', time: elapsedTime(), solution: null};
                 } else {
                     continue; // go back to the start of the big while loop
@@ -93,6 +94,7 @@ function solveBoard(board, width, height) {
             
             if (posX === 0) {
                 // we're back at the beginning of the X array, therefore there is no solution
+                console.log("Impossible to solve, took " + elapsedTime() + " ms");
                 return {status: 'fail', time: elapsedTime(), solution: null};
             }
         }
